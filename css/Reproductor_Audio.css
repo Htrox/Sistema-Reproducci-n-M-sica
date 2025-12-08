@@ -1,0 +1,48 @@
+#reproduccion {
+    width: 700px;
+    border: 1px solid black;
+}
+audio {
+    width: 100%;
+}
+
+#div_btn {
+    display: flex;
+    justify-content: space-evenly;
+}
+button.btn_musica {
+    width: 425px;
+    
+    background-color: white;
+
+    cursor: pointer;
+}
+button.btn_controls {
+    height: 50px;
+    width: 50px;
+    
+    background-color: white;
+    border: 2px solid black;
+    
+    font-size: 100%;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+button.btn_controls:hover {
+    background-color: rgb(235, 235, 235);
+}
+#btn_bucle {
+    background-color: red;
+}
+#btn_Continuar {
+    background-color: red;
+}
+
+#infoAudio {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 10px;
+    border: 2px solid black;
+}

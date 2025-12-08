@@ -1,0 +1,26 @@
+#containerBotones {
+    margin-top: 40px;
+
+}
+#btn_botones{
+    height: 105px;
+    width: 1700px;
+    border: 1px solid black;
+}
+#cambioCacnion {
+    margin-top: 10px;
+    text-align: center;
+}
+#paginacion {
+    margin-top: 20px;
+    text-align: center;
+}
+#div_paginaActual {
+    width: 50px;
+
+    display: inline-block;
+    text-align: center;
+
+    font-weight: bold;
+    font-size: 100%;
+}

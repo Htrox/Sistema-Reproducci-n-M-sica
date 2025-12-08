@@ -1,0 +1,81 @@
+#alertaCrearLista {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+#contenidoCrearLista {
+    background-color: white;
+    border-radius: 8px;
+    height: 80%;
+    width: 80%;
+    margin: 5% auto;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+#div_CrearLista {
+    border: 1px solid black;
+    height: 80%;
+    width: 80%;
+
+    display: flex;
+    justify-content: space-around;
+}
+
+div.divsCrearLista{
+    height: 99.5%;
+    width: 45%;
+    border: 1px solid black;
+}
+
+#buscador {
+    width: 90%;
+}
+
+
+#divBuscador, #CrearLista {
+    display: none;
+}
+#divarribaCrearLista {
+    display: flex;
+    justify-content: start;
+}
+#tituloLista {
+    width: 60%;
+}
+#CancionAñadida {
+    height: 80%;
+    margin-top: 20px;
+}
+#errorLista {
+    color: red;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+
+div.divSpaceBetween {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+#ListaCreadas, #resultados, #CancionAñadida {
+    scrollbar-width: auto;
+}
