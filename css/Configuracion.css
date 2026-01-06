@@ -1,0 +1,54 @@
+#ventanaConfiguracion {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+#contenidoConfiguracion {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    height: 80%;
+    width: 80%;
+    margin: 5% auto;
+    text-align: center;
+}
+
+#columnaConfiguracion {
+    width: 15%;
+}
+#aparicionventanasConfiguracion {
+    border: 1px solid black;
+    width: 80%;
+    height: 100%;
+    overflow: auto;
+}
+
+button.btnConfiguracion {
+    background-color: #fff;
+    border: 1px solid black;
+
+    height: 50PX;
+    width: 100%;
+
+    font-size: 150%;
+}
+button.btnConfiguracion:hover {
+    background-color: #eee;
+    font-weight: bold;
+}
+
+div.divConfiguracion {
+    display: none;
+}
+#configuracion_1 {
+    display: block;
+}
+div.divisionConfiguarcion {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 25px;
+}

@@ -6,7 +6,7 @@ btn_Lista = {
     Pag: 1,
 
     Bucle: "off",
-    Play: "on",
+    Play: "off",
     Siguiente: "off",
 
     Editar: "off",
@@ -50,7 +50,6 @@ function reproducirAudio(i) {
         colorearButton(i)
     }
 }
-reproducirAudio(0)
 
 function colorearButton(i) {
     for (let y = btn_Lista.Min; y < btn_Lista.Max && y < btn_Lista.Maximo; y++) {

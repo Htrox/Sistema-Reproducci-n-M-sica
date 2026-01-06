@@ -8,29 +8,51 @@
     <link rel="stylesheet" href="css/Reproductor_Audio.css">
     <link rel="stylesheet" href="css/Cancion.css">
     <link rel="stylesheet" href="css/Archivo.css">
-    <link rel="stylesheet" href="css/CrearLista.css">
+    <link rel="stylesheet" href="css/Navegador.css">
+    <link rel="stylesheet" href="css/Configuracion.css">
+
+    <link rel="stylesheet" href="css/Lista/CrearLista.css">
+    <link rel="stylesheet" href="css/Lista/Cancion.css">
+    <link rel="stylesheet" href="css/Lista/Reproductor_Audio.css">
     
     <script src="js/General.js" defer></script>
     <script src="js/Paginación.js" defer></script>
     <script src="js/Botones.js" defer></script>
     <script src="js/Archivo.js" defer></script>
-    <script src="js/CrearLista.js" defer></script>
+    <script src="js/Configuarcion.js" defer></script>
+    <script src="js/Navegador.js" defer></script>
+
+    <script src="js/Lista/CrearLista.js" defer></script>
+    <script src="js/Lista/General.js" defer></script>
+    <script src="js/Lista/Botones.js" defer></script>
+    <script src="js/Lista/Paginación.js" defer></script>
+
+    <link rel="icon" type="image/png" href="img/Nota.png">
 </head>
 <body>
+    <div class="divSpaceBetween">
+        <div>
+            <button class="btnBarraSuperior" onclick="mostrarSubirArchivo()">Subir Audios</button>
+            <button class="btnBarraSuperior" onclick="mostrarCrearLista()">Lista</button>
+            <button class="btnBarraSuperior" onclick="mostrarConfiguaracion()">Configuración</button>
+        </div>
+        <button class="btnBarraSuperior" id="btnLista" onclick="OcultarCancionLista()">Cerrar</button>
+        <button class="btnBarraSuperior" id="btnBusqueda" onclick="mostrarNavegador()">🔍</button>
+    </div>
     <h1>MÚSICA</h1>
     <div id="containerAudio">
         <div id="reproduccion">
             <div>
-                <h2 id="tituloAudio"></h2>
+                <h2 id="tituloAudio">[TÍTULO]</h2>
             </div>
             <div>
-                <audio controls id="audio"><source src="../../Music/A Million Gruesome Ways To Die.mp3"></audio>
+                <audio controls id="audio"><source src=""></audio>
             </div>
             <div id="div_btn">
                 <button title="Reiniciar" onclick="audioReiniciar()" class="btn_controls">↩︎</button>
-                <button title="Bucle" onclick="audioBucle()" id="btn_bucle" class="btn_controls">↻</button>
-                <button title="Pausar" onclick="audioPlay()" id="btn_Play" class="btn_controls">❙❙</buuton>
-                <button title="Activar Continuar" onclick="audioContinue()" id="btn_Continuar" class="btn_controls">➤</buuton>
+                <button title="Bucle" onclick="audioBucle()" id="btn_Bucle" class="btn_controls">↻</button>
+                <button title="Pausar" onclick="audioPlay()" id="btn_Play" class="btn_controls">▶</button>
+                <button title="Activar Continuar" onclick="audioContinue()" id="btn_Continuar" class="btn_controls">➤</button>
             </div>
             <div id="infoAudio">
                 <span id="numeroCancion">0</span> / <span id="paginaCancion">0</span>
@@ -39,12 +61,12 @@
 
         <div id="containerBotones">
             <div id="btn_botones">
-                <button onclick="reproducirAudio(95)" class="btn_musica">Inmortal</button>
+                <button onclick="reproducirAudio(0)" class="btn_musica"></button>
             </div>
 
             <div id="cambioCacnion">
-                <button title="Anterior Canción" onclick="cambiarAudio(1)" class="btn_controls">⏮</button>
-                <button title="Siguiente Canción" onclick="cambiarAudio(2)" class="btn_controls">⏭</button>
+                <button title="Anterior Canción" class="btn_controls" onclick="cambiarAudio(1)">⏮</button>
+                <button title="Siguiente Canción" class="btn_controls" onclick="cambiarAudio(2)">⏭</button>
             </div>
             
             <div id="paginacion">
@@ -54,20 +76,57 @@
             </div>
         </div>
     </div>
+    <!-- Sistema Lista -->
+    <div id="div_ocultar">
+        <div id="containerAudioLista">
+            <div id="reproduccionLista">
+                <div>
+                    <h2 id="tituloAudioLista">[TÍTULO]</h2>
+                </div>
+                <div>
+                    <audio controls id="audioLista"><source src=""></audio>
+                </div>
+                <div id="div_btnLista">
+                    <button title="Reiniciar" onclick="audioReiniciarLista()" class="btn_controls">↩︎</button>
+                    <button title="Bucle" onclick="audioBucleLista()" id="btn_BucleLista" class="btn_controls">↻</button>
+                    <button title="Pausar" onclick="audioPlayLista()" id="btn_PlayLista" class="btn_controls">▶</button>
+                    <button title="Activar Continuar" onclick="audioContinueLista()" id="btn_ContinuarLista" class="btn_controls">➤</button>
+                </div>
+            </div>
 
-    <button onclick="mostrarSubirArchivo()">Subir Audios</button>
-    <div id="alertaArchivo">
-        <div id="contenidoArchivo">
-            <h2>Subir Audios desde Carpeta</h2>
-            <button id="btn-cargar">Cargar audios</button>
-            <input type="file" id="input-folder" webkitdirectory multiple hidden><br><br>
-            <button onclick="ocultarSubirArchivo()">Cerrar</button>
+            <div id="containerBotonesLista">
+                <div id="btn_botonesLista">
+                    <button onclick="reproducirAudio(0)" class="btn_musica"></button>
+                </div>
+
+                <div id="cambioCacnionLista">
+                    <button title="Anterior Canción" class="btn_controls" onclick="cambiarAudioLista(1)">⏮</button>
+                    <button title="Siguiente Canción" class="btn_controls" onclick="cambiarAudioLista(2)">⏭</button>
+                </div>
+                
+                <div id="paginacionLista">
+                    <button title="Anterior Pagína" class="btn_controls" onclick="paginaciónLista(0)">⭅</button>
+                    <div id="div_paginaActualLista"><span id="paginaActualLista">1</span></div>
+                    <button title="Proxima Pagína" class="btn_controls" onclick="paginaciónLista(1)">⭆</button>
+                </div>
+            </div>
         </div>
     </div>
-    <button onclick="mostrarCrearLista()">Crear Lista</button>
+
+    <!-- Ventana para actualizar la música -->
+    <div id="ventanaArchivo">
+        <div id="contenidoArchivo">
+            <h2>Subir Audios desde Carpeta</h2>
+            <button class="CuboBlanco" id="btn-cargar">Cargar audios</button>
+            <input type="file" id="input-folder" webkitdirectory multiple hidden><br><br>
+            <button class="CuboBlanco" onclick="ocultarSubirArchivo()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Ventana para crear lista de reproducción -->
     <div id="alertaCrearLista">
         <div id="contenidoCrearLista">
-            <h2>Crear Lista</h2>
+            <h2>Lista</h2>
             <div id="div_CrearLista">
                 <div class="divsCrearLista" id="ListaCreadas">
                     <div id="ListasCreada">
@@ -79,10 +138,10 @@
                             </div>
                         </div>
                     </div>
-                    <button onclick="NuevaLista()">+</button>
+                    <button class="CuboBlanco" style="margin-top: 7.5px;" onclick="NuevaLista()">+</button>
                 </div>
                 <div class="divsCrearLista" id="divBuscador">
-                    <input type="text" id="buscador" placeholder="Escribe para buscar..." autocomplete="off">
+                    <input type="search" id="buscadorLista" placeholder="Escribe para buscar..." autocomplete="off">
                     <div id="resultados"></div>
                 </div>
                 <div class="divsCrearLista" id="CrearLista">
@@ -91,13 +150,110 @@
                     </div>
                     <div id="CancionAñadida"></div>
                     <div>
-                        <button onclick="CancelarNuevaLista()">Cancelar</button>
-                        <button onclick="GuardarLista()" id="GuardarLista">Guardar</button>
+                        <button class="CuboBlanco" onclick="CancelarNuevaLista()">Cancelar</button>
+                        <button class="CuboBlanco" onclick="GuardarLista()" id="GuardarLista">Guardar</button>
                         <div id="errorLista"></div>
                     </div>
                 </div>
+                <div class="divsCrearLista" id="MostrarLista">
+                    <div id="div_MostrarTituloLista">
+                        <span id="MostrarTituloLista"></span>
+                    </div>
+                    <div id="MostrarMusica"></div>
+                    <button onclick="CerrarObservarLista()">Cerrar</button>
+                </div>
             </div>
-            <button onclick="ocultarCrearLista()">Cerrar</button>
+            <button class="CuboBlanco" onclick="ocultarCrearLista()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Ventana para configurar cosas -->
+    <div id="ventanaConfiguracion">
+        <div id="contenidoConfiguracion">
+            <h2>CONFIGURACIÓN</h2>
+            <div style="display: flex; height: 85%; justify-content: space-around; margin-bottom: 2%;">
+                <div id="columnaConfiguracion">
+                    <button class="btnConfiguracion" onclick="cambiarConfiguaracion(1)">CONTROLES</button>
+                    <button class="btnConfiguracion" onclick="cambiarConfiguaracion(2)">COLORES</button>
+                </div>
+                <div id="aparicionventanasConfiguracion">
+                    <div id="configuracion_1" class="divConfiguracion">
+                        <div class="divisionConfiguarcion">
+                            <h3>Controles de Música</h3>
+                            <table>
+                                <tr>
+                                    <td>R</td>
+                                    <td><button class="btn_controls">↩︎</button></td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td><button id="btn_Bucle" class="btn_controls">↻</button></td>
+                                </tr>
+                                <tr>
+                                    <td>(Espacio)</td>
+                                    <td><button id="btn_Play" class="btn_controls">❙❙</button></td>
+                                </tr>
+                                <tr>
+                                    <td>S</td>
+                                    <td><button id="btn_Continuar" class="btn_controls">➤</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="divisionConfiguarcion">
+                            <h3>Controles de Cambio de Música</h3>
+                            <table>
+                                <tr>
+                                    <td>(flecha izquierda)</td>
+                                    <td><button class="btn_controls">⭅</button></td>
+                                </tr>
+                                <tr>
+                                    <td>(flecha derecha)</td>
+                                    <td><button class="btn_controls">⭆</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="divisionConfiguarcion">
+                            <h3>Controles de Cambio de Pagína</h3>
+                            <table>
+                                <tr>
+                                    <td>(flecha izquierda) + Ctrl</td>
+                                    <td><button class="btn_controls">⏮</button></td>
+                                </tr>
+                                <tr>
+                                    <td>(flecha derecha) + Ctrl</td>
+                                    <td><button class="btn_controls">⏭</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="configuracion_2" class="divConfiguracion">
+                        <table>
+                            <tr>
+                                <td><button class="btn_musica">Algo</button></td>
+                                <td>
+                                    <input type="color" value="#000000">
+                                    <input type="color" value="#ffffff">
+                                    <input type="color" value="#000000">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <button class="CuboBlanco" onclick="ocultarConfiguaracion()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Ventana para navegar -->
+    <div id="ventanaNavegador">
+        <div id="contenidoNavegador">
+            <h2>NAVEGAR</h2>
+            <div id="buscadorReproductor">
+                <input type="search" id="buscadorPlay" placeholder="Buscar canción para reproducir..." autocomplete="off" style="width: 50%;">
+                <div id="resultadosPlay"></div>
+            </div>
+            <button class="CuboBlanco" onclick="ocultarNavegador()">Cerrar</button>
         </div>
     </div>
 
@@ -136,7 +292,6 @@
 
             // 👉 Guardar en localStorage
             localStorage.setItem("Lista", JSON.stringify(audioArray));
-            alert("Array generado y guardado en localStorage.");
         });
 
         function obtenerDuracion(url) {
@@ -148,33 +303,35 @@
                 });
             });
         }
-    </script>
+    </script> 
     <script>// Poner siguiente canción automáticamente
-        // Detectar cuando termina el audio
         document.getElementById("audio").addEventListener("ended", function () {
-            // Si el bucle está activado o nop esta activo la siguiente canción, no avanzar a la siguiente
+
+            // Si el bucle está activado o siguiente desactivado, no avanzar
             if (btn_Lista.Bucle === "on" || btn_Lista.Siguiente === "off") return;
 
-            // Si NO es la última canción, avanzar
+            // Si NO es la última canción
             if (btn_Lista.N_Cancion < Lista.length - 1) {
                 btn_Lista.N_Cancion++;
 
-                // Control de paginación automática si cambia de página
+                // Control de paginación
                 if (btn_Lista.N_Cancion + 1 > btn_Lista.Max) {
                     paginación(1);
                 }
 
                 reproducirAudio(btn_Lista.N_Cancion);
-            }
-            else {
-                // Si llegó a la última canción
-                btn_Lista.Play = "off";
-                document.getElementById("btn_Play").innerText = "▶";
+            } else {
+                // Si es la última, volver a la primera
+                btn_Lista.N_Cancion = 0;
+                btn_Lista.Pag = 1;
+                btn_Lista.Min = 0;
+                btn_Lista.Max = 20;
+                paginación(2);
+                reproducirAudio(btn_Lista.N_Cancion);
             }
         });
-
     </script>
-    <script>//Buscador para crear Lista
+    <script>// Buscador para crear Lista
         // Función que se ejecuta al hacer clic
         function seleccionarElemento(index) {
             const item = Lista[index];
@@ -184,7 +341,7 @@
         // ------------------------------------
         // Buscador con botones
         // ------------------------------------
-        document.getElementById("buscador").addEventListener("input", function() {
+        document.getElementById("buscadorLista").addEventListener("input", function() {
             const texto = this.value.toLowerCase();
             const contenedor = document.getElementById("resultados");
             contenedor.innerHTML = "";
@@ -208,5 +365,58 @@
             });
         });
     </script>
+    <script>// Navegador de canciones
+        document.getElementById("buscadorPlay").addEventListener("input", function() {
+            const texto = this.value.toLowerCase();
+            const contenedor = document.getElementById("resultadosPlay");
+            contenedor.innerHTML = "";
+
+            if (texto.trim() === "") return;
+
+            const filtrados = Lista
+                .map((obj, i) => ({ obj, index: i }))
+                .filter(item => item.obj.nombre.toLowerCase().includes(texto))
+                .slice(0, 75);
+
+            filtrados.forEach(item => {
+                const btn = document.createElement("button");
+                btn.textContent = item.obj.nombre;
+                btn_Lista.N_Cancion = item.index
+                
+
+                btn.onclick = () => {
+                    reproducirAudio(item.index)
+                    BuscarPaginaCancion()
+                };
+
+                contenedor.appendChild(btn);
+            });
+        });
+    </script>
+    <!--
+    <script>// Poner siguiente canción automáticamente de la listas creadas
+        document.getElementById("audioLista").addEventListener("endedList", function () {
+            // Si el bucle está activado o nop esta activo la siguiente canción, no avanzar a la siguiente
+            if (btn_Lista.Bucle_Lista === "on" || btn_Lista.Siguiente_Lista === "off") return;
+
+            // Si NO es la última canción, avanzar
+            if (btn_Lista.N_Cancion < Lista.length - 1) {
+                btn_Lista.N_Cancion++;
+
+                // Control de paginación automática si cambia de página
+                if (btn_Lista.N_Cancion + 1 > btn_Lista.Max) {
+                    paginación(1);
+                }
+
+                reproducirAudio(btn_Lista.N_Cancion);
+            }
+            else {
+                // Si llegó a la última canción
+                btn_Lista.Play = "off";
+                document.getElementById("btn_Play").innerText = "▶";
+            }
+        });
+    </script>
+    -->
 </body>
 </html>

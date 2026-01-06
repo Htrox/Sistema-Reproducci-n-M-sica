@@ -1,0 +1,23 @@
+#reproduccionLista {
+    width: 700px;
+    border: 1px solid black;
+}
+
+#div_btnLista {
+    display: flex;
+    justify-content: space-evenly;
+}
+#btn_BucleLista {
+    background-color: red;
+}
+#btn_ContinuarLista {
+    background-color: red;
+}
+
+#infoAudioLista {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 10px;
+    border: 2px solid black;
+}

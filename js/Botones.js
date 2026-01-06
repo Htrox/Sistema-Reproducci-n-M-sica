@@ -6,12 +6,12 @@ function audioBucle() {
     switch (btn_Lista.Bucle) {
         case "on":
             document.getElementById('audio').loop = false;
-            document.getElementById('btn_bucle').style = "background: red; color: black";
+            document.getElementById('btn_Bucle').style = "background: red; color: black";
             btn_Lista.Bucle = "off";
             break;
         case "off":
             document.getElementById('audio').loop = true;
-            document.getElementById('btn_bucle').style = "background: green; color: white";
+            document.getElementById('btn_Bucle').style = "background: green; color: white";
             btn_Lista.Bucle = "on";
             break;
     }
@@ -79,50 +79,51 @@ function cambiarAudio(i) {
 
 // EJECUCIÓN DE LOS BOTONES
 document.addEventListener("keydown", function (event) {
-    if (document.activeElement.id === "buscador") return;
+    if (document.activeElement.id === "buscadorLista") return;
     if (document.activeElement.id === "tituloLista") return;
+    if (document.activeElement.id === "buscadorPlay") return;
 
     // Control de reproducción con Barra Espaciadora
-    if (event.code === "Space") {
+    if (event.code === "Space" && btnLista.ENLISTA === "off") {
         event.preventDefault();
         audioPlay();
     }
 
     // Control de reinicio con R
-    if (event.code === "KeyR") {
+    if (event.code === "KeyR" && btnLista.ENLISTA === "off") {
         event.preventDefault();
         audioReiniciar();
     }
 
     // Control de bucle con B
-    if (event.code === "KeyB") {
+    if (event.code === "KeyB" && btnLista.ENLISTA === "off") {
         event.preventDefault();
         audioBucle();
     }
 
     // Control de siguiente canción con S
-    if (event.code === "KeyS") {
+    if (event.code === "KeyS" && btnLista.ENLISTA === "off") {
         event.preventDefault();
     }
     
     // Controles de paginación con Ctrl + Flechas
-    if (event.code === "ArrowLeft" && event.ctrlKey) {
+    if (event.code === "ArrowLeft" && event.ctrlKey && btnLista.ENLISTA === "off") {
         event.preventDefault();
         paginación(0)
         return;
     }
-    if (event.code === "ArrowRight" && event.ctrlKey) {
+    if (event.code === "ArrowRight" && event.ctrlKey && btnLista.ENLISTA === "off") {
         event.preventDefault();
         paginación(1)
         return;
     }
 
     // Cambiar canción con Flechas
-    if (event.code === "ArrowLeft") {
+    if (event.code === "ArrowLeft" && btnLista.ENLISTA === "off") {
         event.preventDefault();
         cambiarAudio(1);
     }
-    if (event.code === "ArrowRight") {
+    if (event.code === "ArrowRight" && btnLista.ENLISTA === "off") {
         event.preventDefault();
         cambiarAudio(2);
     }

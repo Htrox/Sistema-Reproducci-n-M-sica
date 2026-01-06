@@ -7,8 +7,35 @@ h1, h2 {
     text-align: center;
 }
 
+button.btnBarraSuperior {
+    border: 1px solid black;
+    background-color: white;
+
+    font-size: 20px;
+}
+button.btnBarraSuperior:hover {
+    background-color: rgb(230, 230, 230);
+}
+
 #containerAudio {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+table, tr, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#ListaCreadas, #divBuscador, #CancionAñadida {
+    overflow: auto;
+}
+
+button.CuboBlanco {
+    border: 1px solid black;
+    background-color: white;
+}
+button.CuboBlanco:hover {
+    background-color: RGB(235, 235, 235);
 }

@@ -1,20 +1,33 @@
-#containerBotones {
+#btnLista {
+    display: none;
+}
+
+#div_ocultar {
+    display: none;
+}
+#containerAudioLista {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#containerBotonesLista {
     margin-top: 40px;
 }
-#btn_botones {
+#btn_botonesLista {
     height: 105px;
     width: 1700px;
     border: 1px solid black;
 }
-#cambioCacnion {
+#cambioCacnionLista {
     margin-top: 10px;
     text-align: center;
 }
-#paginacion {
+#paginacionLista {
     margin-top: 20px;
     text-align: center;
 }
-#div_paginaActual {
+#div_paginaActualLista {
     width: 50px;
 
     display: inline-block;
