@@ -11,7 +11,7 @@ btn_Lista = {
 
     Editar: "off",
 
-    N_Cancion: 0,
+    N_Cancion: null,
 }
 
 function actualizarBotones() {
@@ -38,8 +38,6 @@ function reproducirAudio(i) {
 
     audioElement.play();
     document.getElementById('tituloAudio').innerText = Lista[i].nombre;
-    document.getElementById('numeroCancion').innerText = i;
-    document.getElementById('paginaCancion').innerText = btn_Lista.Pag;
 
     document.getElementById('btn_Play').innerText = "❙❙";
     btn_Lista.Play = "on";
@@ -56,6 +54,7 @@ function colorearButton(i) {
         if (y >= Lista.length) break;
         document.getElementById("cancion_" + y).style = "background-color: white; color: black;";
     }
-
-    document.getElementById('cancion_'+i).style = "background-color: black; color: white;";
+    if (i != null) {
+        document.getElementById('cancion_'+i).style = "background-color: black; color: white;";
+    }
 }

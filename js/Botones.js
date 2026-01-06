@@ -1,6 +1,15 @@
 function audioReiniciar() {
     const audio = document.getElementById('audio');
     audio.currentTime = 0;      // Reiniciar al inicio
+
+    switch (btn_Lista.Play) {
+        case "on":
+            audio.play()
+            break;
+        case "off":
+            audio.pause()
+            break;
+    }
 }
 function audioBucle() {
     switch (btn_Lista.Bucle) {

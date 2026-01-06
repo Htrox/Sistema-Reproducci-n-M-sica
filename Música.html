@@ -54,9 +54,6 @@
                 <button title="Pausar" onclick="audioPlay()" id="btn_Play" class="btn_controls">▶</button>
                 <button title="Activar Continuar" onclick="audioContinue()" id="btn_Continuar" class="btn_controls">➤</button>
             </div>
-            <div id="infoAudio">
-                <span id="numeroCancion">0</span> / <span id="paginaCancion">0</span>
-            </div>
         </div>
 
         <div id="containerBotones">
@@ -290,6 +287,10 @@
                 URL.revokeObjectURL(objectURL);
             }
 
+            audioArray.sort((a, b) => {
+                return a.nombre.localeCompare(b.nombre);
+            });
+
             // 👉 Guardar en localStorage
             localStorage.setItem("Lista", JSON.stringify(audioArray));
         });
@@ -303,7 +304,7 @@
                 });
             });
         }
-    </script> 
+    </script>
     <script>// Poner siguiente canción automáticamente
         document.getElementById("audio").addEventListener("ended", function () {
 

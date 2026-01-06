@@ -38,11 +38,3 @@ button.btn_controls:hover {
 #btn_Continuar {
     background-color: red;
 }
-
-#infoAudio {
-    display: flex;
-    justify-content: center;
-
-    margin-top: 10px;
-    border: 2px solid black;
-}
