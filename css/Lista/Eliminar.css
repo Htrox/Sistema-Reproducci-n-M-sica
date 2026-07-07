@@ -1,0 +1,21 @@
+#contenidoEliminarLista {
+    background-color: red;
+    padding: 20px;
+    border-radius: 8px;
+    width: 375px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+#btnEliminarLista {
+    background-color: #fff;
+    border: 1px solid black;
+    height: 50PX;
+    font-size: 200%;
+    border-radius: 25px;
+}
+#btnEliminarLista:hover {
+    background-color: #ddd;
+    color: red;
+    font-weight: bold;
+}

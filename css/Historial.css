@@ -1,0 +1,54 @@
+#contenidoHistorial {
+    background-color: white;
+    border-radius: 8px;
+    height: 80%;
+    width: 30%;
+    margin: 5% auto;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#listaHistorial {
+    width: 90%;
+    height: 79%;
+    overflow-y: auto;
+    margin-top: 20px;
+}
+
+#BorrarHistorial {
+    border: 1px solid black;
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#BorrarHistorial:hover {background-color: rgb(205, 0, 0); transition: background-color 0.25s ease;}
+
+#contenidoBorrarHistorial {
+    border: 1px solid black;
+    background-color: red;
+    padding: 20px;
+    border-radius: 8px;
+    width: 375px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+#btnBorrarHistorialConfirmar {
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    padding: 5px 10px;
+    font-size: 35px;
+    border-radius: 25px;
+}
+#btnBorrarHistorialConfirmar:hover {
+    background-color: #ddd;
+    color: red;
+    font-weight: bold;
+    transition: background-color 0.25s ease;
+}

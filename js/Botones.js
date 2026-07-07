@@ -1,63 +1,85 @@
 function audioReiniciar() {
-    const audio = document.getElementById('audio');
-    audio.currentTime = 0;      // Reiniciar al inicio
+    const Audio = document.getElementById('audio');
+
+    if (Audio.src === "") {return};
+
+    document.getElementById('Barra').style.width = "0%";
+
+    Audio.currentTime = 0;      // Reiniciar al inicio
 
     switch (btn_Lista.Play) {
         case "on":
-            audio.play()
+            Audio.play()
             break;
         case "off":
-            audio.pause()
+            Audio.pause()
             break;
     }
 }
 function audioBucle() {
-    switch (btn_Lista.Bucle) {
-        case "on":
-            document.getElementById('audio').loop = false;
-            document.getElementById('btn_Bucle').style = "background: red; color: black";
-            btn_Lista.Bucle = "off";
+    const Audio = document.getElementById('audio');
+    const Button = document.getElementById('btn_Bucle');
+
+    if (Audio.src === "") {return};
+
+    switch (Audio.loop) {
+        case true:
+            Button.classList.replace('btn_controls_Green', 'btn_controls_Red');
+            Audio.loop = false;
+            btn_Lista.Bucle = false;
             break;
-        case "off":
-            document.getElementById('audio').loop = true;
-            document.getElementById('btn_Bucle').style = "background: green; color: white";
-            btn_Lista.Bucle = "on";
+        case false:
+            Button.classList.replace('btn_controls_Red', 'btn_controls_Green');
+            Audio.loop = true;
+            btn_Lista.Bucle = true;
             break;
     }
 }
 function audioPlay() {
+    const Audio = document.getElementById('audio');
+
+    if (Audio.src === "") {return};
+    
     switch (btn_Lista.Play) {
         case "on":
-            document.getElementById('audio').pause();
-            document.getElementById('btn_Play').innerText = "▶";
+            Audio.pause();
             btn_Lista.Play = "off";
-            document.getElementById('btn_Play').title = "Reanudar";
             return;
         case "off":
-            document.getElementById('audio').play();
-            document.getElementById('btn_Play').innerText = "❙❙";
+            Audio.play();
             btn_Lista.Play = "on";
-            document.getElementById('btn_Play').title = "Pausar";
             break;
     }
 }
 
 function audioContinue() {
+    const Audio = document.getElementById('audio');
+    const Button1 = document.getElementById('btn_Continuar');
+    const Button2 = document.getElementById('btn_SiguienteBucle');
+
+    if (Audio.src === "") {return};
+
     switch (btn_Lista.Siguiente) {
-        case "on":
-            document.getElementById('btn_Continuar').style = "background: red; color: black";
-            document.getElementById('btn_Continuar').title = "Activar Continuar";
-            btn_Lista.Siguiente = "off";
+        case true:
+            Button1.classList.replace('btn_controls_Green', 'btn_controls_Red');
+            Button1.title = 'Activar Continuar';
+            Button2.style.display = 'none';
+
+            btn_Lista.Siguiente = false;
             break;
-        case "off":
-            document.getElementById('btn_Continuar').style = "background: green; color: white";
-            document.getElementById('btn_Continuar').title = "Desactivar Continuar";
-            btn_Lista.Siguiente = "on";
+        case false:
+            Button1.classList.replace('btn_controls_Red', 'btn_controls_Green');
+            Button1.title = 'Desactivar Continuar';
+            Button2.style.display = 'block';
+
+            btn_Lista.Siguiente = true;
             break;
     }
 }
 
 function cambiarAudio(i) {
+    if (btn_Lista.N_Cancion === null) {return};
+
     switch (i) {
         case 1: // Para Atras
             if (btn_Lista.N_Cancion > 0) {
@@ -67,7 +89,7 @@ function cambiarAudio(i) {
                     paginación(0);
                 }
 
-                reproducirAudio(btn_Lista.N_Cancion);
+                reproducirAudio(btn_Lista.N_Cancion, btn_Lista.N_Cancion);
             }
             break;
         case 2: // Para Adelante
@@ -78,62 +100,34 @@ function cambiarAudio(i) {
                     paginación(1);
                 }
 
-                reproducirAudio(btn_Lista.N_Cancion);
+                reproducirAudio(btn_Lista.N_Cancion, btn_Lista.N_Cancion);
             }
             break;
     }
 }
 
+function audioContinueBucle() {
+    const Audio = document.getElementById('audio');
+    const Button = document.getElementById('btn_SiguienteBucle');
 
+    if (Audio.src === "") {return};
 
-// EJECUCIÓN DE LOS BOTONES
-document.addEventListener("keydown", function (event) {
-    if (document.activeElement.id === "buscadorLista") return;
-    if (document.activeElement.id === "tituloLista") return;
-    if (document.activeElement.id === "buscadorPlay") return;
-
-    // Control de reproducción con Barra Espaciadora
-    if (event.code === "Space" && btnLista.ENLISTA === "off") {
-        event.preventDefault();
-        audioPlay();
+    if (btn_Lista.Siguiente) {
+        switch (btn_Lista.SiguienteBucle) {
+            case true:
+                Button.classList.replace('btn_controls_Green', 'btn_controls_Red');
+                Button.title = 'Activar Bucle de Continuar';
+                Button.style.display = 'block';
+                
+                btn_Lista.SiguienteBucle = false;
+                break;
+            case false:
+                Button.classList.replace('btn_controls_Red', 'btn_controls_Green');
+                Button.title = 'Desactivar Bucle de Continuar';
+                Button.style.display = 'block';
+                
+                btn_Lista.SiguienteBucle = true;
+                break;
+        }
     }
-
-    // Control de reinicio con R
-    if (event.code === "KeyR" && btnLista.ENLISTA === "off") {
-        event.preventDefault();
-        audioReiniciar();
-    }
-
-    // Control de bucle con B
-    if (event.code === "KeyB" && btnLista.ENLISTA === "off") {
-        event.preventDefault();
-        audioBucle();
-    }
-
-    // Control de siguiente canción con S
-    if (event.code === "KeyS" && btnLista.ENLISTA === "off") {
-        event.preventDefault();
-    }
-    
-    // Controles de paginación con Ctrl + Flechas
-    if (event.code === "ArrowLeft" && event.ctrlKey && btnLista.ENLISTA === "off") {
-        event.preventDefault();
-        paginación(0)
-        return;
-    }
-    if (event.code === "ArrowRight" && event.ctrlKey && btnLista.ENLISTA === "off") {
-        event.preventDefault();
-        paginación(1)
-        return;
-    }
-
-    // Cambiar canción con Flechas
-    if (event.code === "ArrowLeft" && btnLista.ENLISTA === "off") {
-        event.preventDefault();
-        cambiarAudio(1);
-    }
-    if (event.code === "ArrowRight" && btnLista.ENLISTA === "off") {
-        event.preventDefault();
-        cambiarAudio(2);
-    }
-});
+}

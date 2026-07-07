@@ -36,7 +36,7 @@ function BuscarPaginaCancion() {
         btn_Lista.Max = (i*20)
 
         if (btn_Lista.Min <= btn_Lista.N_Cancion && btn_Lista.Max >= btn_Lista.N_Cancion) {
-            if (btn_Lista.N_Cancion % 20 === 0) {
+            if (btn_Lista.N_Cancion !== 0 && btn_Lista.N_Cancion % 20 === 0) {
                 btn_Lista.Pag += 1
                 btn_Lista.Min += 20
                 btn_Lista.Max += 20

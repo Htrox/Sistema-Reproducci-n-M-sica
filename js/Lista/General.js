@@ -5,17 +5,20 @@ btnLista = {
 
     Pag: 1,
 
-    Bucle: "off",
-    Play: "on",
-    Siguiente: "off",
+    Bucle: false,
+    Play: "off",
+    Siguiente: false,
+    SiguienteBucle: false,
 
     ENLISTA: "off",
 
-    N_Cancion: 0,
+    N_Cancion: null,
 }
 
+
+
 function actualizarBotonesLista() {
-    document.getElementById('btn_botonesLista').innerHTML = "";
+    document.getElementById('btn_botonesLista').innerHTML = '';
     for (let i = btnLista.Min; i < btnLista.Max && i < btnLista.Maximo; i++) {
         if (i >= Lista_Musica.Cargar.Nombre.length) break;
         document.getElementById('btn_botonesLista').innerHTML += '<button onclick="reproducirAudioLista(' + [i] + ')" class="btn_musica" id="cancionLista_' + i + '">' + Lista_Musica.Cargar.Nombre[i] + '</button>'
@@ -26,32 +29,36 @@ function actualizarBotonesLista() {
     }
 }
 
-function reproducirAudioLista(i) {
-    const audioElement = document.getElementById('audioLista');
-    audioElement.src = Lista[Lista_Musica.Cargar.Numero[i]].src;
+function reproducirAudioLista(i, y) {
+    if (btnLista.ENLISTA === "on") {
+        ColocarTítulo = document.getElementById('tituloAudioLista')
+        if (btnLista.N_Cancion === i && y === undefined && Lista_Musica.Cargar.Nombre[i] === ColocarTítulo.innerText) {return}
+        Título = Lista_Musica.Cargar.Nombre[i] || Lista[Lista_Musica.Cargar.Numero[i]].src;
+        document.getElementById('BarraLista').style.width = "0%";
 
-    if (btnLista.Bucle === "on") {
-        audioElement.loop = true;
-    }
+        const audioElement = document.getElementById('audioLista');
+        audioElement.src = Preferencias.Dirección + Lista[Lista_Musica.Cargar.Numero[i]].src;
 
-    audioElement.play();
-    document.getElementById('tituloAudioLista').innerText = Lista_Musica.Cargar.Nombre[i];
+        audioElement.play();
+        ColocarTítulo.innerText = Título;
 
-    document.getElementById('btn_PlayLista').innerText = "❙❙";
-    btnLista.Play = "on";
+        btnLista.Play = "on";
 
-    btnLista.N_Cancion = i
+        btnLista.N_Cancion = i
 
-    if (btnLista.N_Cancion >= btnLista.Min && btnLista.N_Cancion < btnLista.Max) {
-        colorearButtonLista(i)
+        if (btnLista.N_Cancion >= btnLista.Min && btnLista.N_Cancion < btnLista.Max) {
+            colorearButtonLista(i)
+        }
     }
 }
 
 function colorearButtonLista(i) {
     for (let y = btnLista.Min; y < btnLista.Max && y < btnLista.Maximo; y++) {
         if (y >= Lista_Musica.Cargar.Nombre.length) break; // Esto evita errores si hay menos canciones que el maximo
-        document.getElementById("cancionLista_" + y).style = "background-color: white; color: black;";
+        document.getElementById("cancionLista_" + y).className = "btn_musica";
     }
 
-    document.getElementById('cancionLista_'+i).style = "background-color: black; color: white;";
+    if (i != null) {
+        document.getElementById('cancionLista_'+i).className = "btn_musica_black";
+    }
 }

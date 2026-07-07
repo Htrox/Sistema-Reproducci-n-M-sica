@@ -1,32 +1,20 @@
-#btnLista {
-    display: none;
-}
+#btnLista, #div_ocultar {display: none;}
 
-#div_ocultar {
-    display: none;
-}
 #containerAudioLista {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-#containerBotonesLista {
-    margin-top: 40px;
-}
+#containerBotonesLista {margin-top: 40px;}
 #btn_botonesLista {
-    height: 105px;
+    min-height: 210px;
+    max-height: 252px;
     width: 1700px;
     border: 1px solid black;
 }
-#cambioCacnionLista {
-    margin-top: 10px;
-    text-align: center;
-}
-#paginacionLista {
-    margin-top: 20px;
-    text-align: center;
-}
+#cambioCacnionLista {margin-top: 10px;text-align: center;}
+#paginacionLista {margin-top: 20px;text-align: center;}
 #div_paginaActualLista {
     width: 50px;
 
@@ -35,4 +23,26 @@
 
     font-weight: bold;
     font-size: 100%;
+}
+
+#btbAleatorioLista {text-align: center;}
+
+#divBarraLista {
+    border: 1px solid black;
+    width: 92.5%;
+    
+    margin-top: 3.75%;
+    margin-left: 3.75%;
+    margin-right: 3.75%;
+    cursor: pointer;
+}
+#BarraLista {
+    background-color: #4caf50;
+    height: 20px;
+    width: 0%;
+}
+#divTiempoActualLista {
+    margin-top: 10px;
+    text-align: center;
+    margin-bottom: 3.5%;
 }

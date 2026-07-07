@@ -1,54 +1,85 @@
 function audioReiniciarLista() {
+    if (document.getElementById('audioLista').src === null) {return};
+
+    document.getElementById('BarraLista').style.width = "0%";
+
     const audio = document.getElementById('audioLista');
     audio.currentTime = 0;      // Reiniciar al inicio
-}
-function audioBucleLista() {
-    switch (btnLista.Bucle) {
+
+    switch (btnLista.Play) {
         case "on":
-            document.getElementById('audioLista').loop = false;
-            document.getElementById('btn_BucleLista').style = "background: red; color: black";
-            btnLista.Bucle = "off";
+            audio.play()
             break;
         case "off":
-            document.getElementById('audioLista').loop = true;
-            document.getElementById('btn_BucleLista').style = "background: green; color: white";
-            btnLista.Bucle = "on";
+            audio.pause()
+            break;
+    }
+}
+function audioBucleLista() {
+    const Audio = document.getElementById('audioLista');
+    const Button = document.getElementById('btn_BucleLista');
+
+    if (Audio.src === "") {return};
+
+    switch (Audio.loop) {
+        case true:
+            Button.classList.replace('btn_controls_Green', 'btn_controls_Red');
+            Audio.loop = false;
+            btnLista.Bucle = false;
+            break;
+        case false:
+            Button.classList.replace('btn_controls_Red', 'btn_controls_Green');
+            Audio.loop = true;
+            btnLista.Bucle = true;
             break;
     }
 }
 function audioPlayLista() {
+    const Audio = document.getElementById('audioLista');
+
+    if (Audio.src === "") {return};
+
     switch (btnLista.Play) {
         case "on":
-            document.getElementById('audioLista').pause();
-            document.getElementById('btn_PlayLista').innerText = "▶";
+            Audio.pause();
             btnLista.Play = "off";
-            document.getElementById('btn_PlayLista').title = "Reanudar";
             return;
         case "off":
-            document.getElementById('audioLista').play();
-            document.getElementById('btn_PlayLista').innerText = "❙❙";
+            Audio.play();
             btnLista.Play = "on";
-            document.getElementById('btn_PlayLista').title = "Pausar";
             break;
     }
 }
 
 function audioContinueLista() {
+    const Audio = document.getElementById('audioLista');
+    const Button1 = document.getElementById('btn_ContinuarLista');
+    const Button2 = document.getElementById('btn_SiguienteBucleLista');
+
+    if (Audio.src === "") {return};
+
     switch (btnLista.Siguiente) {
-        case "on":
-            document.getElementById('btn_ContinuarLista').style = "background: red; color: black";
-            document.getElementById('btn_ContinuarLista').title = "Activar Continuar";
-            btnLista.Siguiente = "off";
+        case true:
+            Button1.classList.replace('btn_controls_Green', 'btn_controls_Red');
+            Button1.title = 'Activar Continuar';
+            Button2.style.display = 'none';
+
+            btnLista.Siguiente = false;
             break;
-        case "off":
-            document.getElementById('btn_ContinuarLista').style = "background: green; color: white";
-            document.getElementById('btn_ContinuarLista').title = "Desactivar Continuar";
-            btnLista.Siguiente = "on";
+        case false:
+            Button1.classList.replace('btn_controls_Red', 'btn_controls_Green');
+            Button1.title = 'Desactivar Continuar';
+            Button2.style.display = 'block';
+
+            btnLista.Siguiente = true;
             break;
     }
 }
 
 function cambiarAudioLista(i) {
+    
+    if (btnLista.N_Cancion === null) {return};
+
     switch (i) {
         case 1: // Para Atras
             if (btnLista.N_Cancion > 0) {
@@ -58,7 +89,7 @@ function cambiarAudioLista(i) {
                     paginaciónLista(0);
                 }
 
-                reproducirAudioLista(btnLista.N_Cancion);
+                reproducirAudioLista(btnLista.N_Cancion, btnLista.N_Cancion);
             }
             break;
         case 2: // Para Adelante
@@ -69,62 +100,40 @@ function cambiarAudioLista(i) {
                     paginaciónLista(1);
                 }
 
-                reproducirAudioLista(btnLista.N_Cancion);
+                reproducirAudioLista(btnLista.N_Cancion, btnLista.N_Cancion);
             }
             break;
     }
 }
 
+function audioContinueBucleLista() {
+    const Audio = document.getElementById('audioLista');
+    const Button = document.getElementById('btn_SiguienteBucleLista');
+
+    if (Audio.src === "") {return}
 
 
-// EJECUCIÓN DE LOS BOTONES
-document.addEventListener("keydown", function (event) {
-    if (document.activeElement.id === "buscadorLista") return;
-    if (document.activeElement.id === "tituloLista") return;
-    if (document.activeElement.id === "buscadorPlay") return;
+    if (btnLista.Siguiente) {
+        switch (btnLista.SiguienteBucle) {
+            case true:
+                Button.classList.replace('btn_controls_Green', 'btn_controls_Red');
+                Button.title = 'Activar Bucle de Continuar';
+                Button.style.display = 'block';
 
-    // Control de reproducción con Barra Espaciadora
-    if (event.code === "Space" && btnLista.ENLISTA === "on") {
-        event.preventDefault();
-        audioPlayLista();
-    }
+                btnLista.SiguienteBucle = false;
+                break;
+            case false:
+                Button.classList.replace('btn_controls_Red', 'btn_controls_Green');
+                Button.title = 'Desactivar Bucle de Continuar';
+                Button.style.display = 'block';
 
-    // Control de reinicio con R
-    if (event.code === "KeyR" && btnLista.ENLISTA === "on") {
-        event.preventDefault();
-        audioReiniciarLista();
+                btnLista.SiguienteBucle = true;
+                break;
+        }
     }
+}
 
-    // Control de bucle con B
-    if (event.code === "KeyB" && btnLista.ENLISTA === "on") {
-        event.preventDefault();
-        audioBucleLista();
-    }
-
-    // Control de siguiente canción con S
-    if (event.code === "KeyS" && btnLista.ENLISTA === "on") {
-        event.preventDefault();
-    }
-    
-    // Controles de paginación con Ctrl + Flechas
-    if (event.code === "ArrowLeft" && event.ctrlKey && btnLista.ENLISTA === "on") {
-        event.preventDefault();
-        paginaciónLista(0)
-        return;
-    }
-    if (event.code === "ArrowRight" && event.ctrlKey && btnLista.ENLISTA === "on") {
-        event.preventDefault();
-        paginaciónLista(1)
-        return;
-    }
-
-    // Cambiar canción con Flechas
-    if (event.code === "ArrowLeft" && btnLista.ENLISTA === "on") {
-        event.preventDefault();
-        cambiarAudioLista(1);
-    }
-    if (event.code === "ArrowRight" && btnLista.ENLISTA === "on") {
-        event.preventDefault();
-        cambiarAudioLista(2);
-    }
-});
+function aleatorioLista() {
+    reproducirAudioLista(Math.floor(Math.random() * Lista_Musica.Cargar.Nombre.length))
+    BuscarPaginaCancionLista()
+}

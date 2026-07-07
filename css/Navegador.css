@@ -1,10 +1,3 @@
-#ventanaNavegador {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
 #contenidoNavegador {
     background-color: white;
     border-radius: 8px;
@@ -18,10 +11,5 @@
     align-items: center;
 }
 
-#buscadorPlay {
-    width: 50%;
-    min-width: 225px;
-}
-#buscadorReproductor {
-    height: 85%;
-}
+#buscadorPlay {width: 75%;min-width: 225px;}
+#buscadorReproductor {height: 85%;margin-top: 10px;}

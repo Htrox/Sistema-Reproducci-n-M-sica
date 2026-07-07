@@ -4,36 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MÚSICA</title>
+
+    <!-- CSS General -->
     <link rel="stylesheet" href="css/General.css">
     <link rel="stylesheet" href="css/Reproductor_Audio.css">
     <link rel="stylesheet" href="css/Cancion.css">
     <link rel="stylesheet" href="css/Archivo.css">
     <link rel="stylesheet" href="css/Navegador.css">
     <link rel="stylesheet" href="css/Configuracion.css">
+    <link rel="stylesheet" href="css/Historial.css">
 
+    <!-- CSS Lista -->
     <link rel="stylesheet" href="css/Lista/CrearLista.css">
     <link rel="stylesheet" href="css/Lista/Cancion.css">
     <link rel="stylesheet" href="css/Lista/Reproductor_Audio.css">
+    <link rel="stylesheet" href="css/Lista/Eliminar.css">
+    <link rel="stylesheet" href="css/Lista/General.css">
     
-    <script src="js/General.js" defer></script>
-    <script src="js/Paginación.js" defer></script>
-    <script src="js/Botones.js" defer></script>
-    <script src="js/Archivo.js" defer></script>
-    <script src="js/Configuarcion.js" defer></script>
-    <script src="js/Navegador.js" defer></script>
-
-    <script src="js/Lista/CrearLista.js" defer></script>
-    <script src="js/Lista/General.js" defer></script>
-    <script src="js/Lista/Botones.js" defer></script>
-    <script src="js/Lista/Paginación.js" defer></script>
+    <!-- JS General -->
+    <script defer src="js/General.js"></script>
+    <script defer src="js/Paginación.js"></script>
+    <script defer src="js/Botones.js"></script>
+    <script defer src="js/Archivo.js"></script>
+    <script defer src="js/Configuarcion.js"></script>
+    <script defer src="js/Navegador.js"></script>
+    <script defer src="js/Controles.js"></script>
+    <script defer src="js/Historial.js"></script>
+    
+    <!-- JS Lista -->
+    <script defer src="js/Lista/CrearLista.js"></script>
+    <script defer src="js/Lista/General.js"></script>
+    <script defer src="js/Lista/Botones.js"></script>
+    <script defer src="js/Lista/Paginación.js"></script>
+    <script defer src="js/Lista/Temporal.js"></script>
+    <script defer src="js/Lista/EditarLista.js"></script>
+    <script defer src="js/Lista/Eliminar.js"></script>
+    
+    <!-- Preferencias -->
+    <script defer src="js/Preferencias.js"></script>
 
     <link rel="icon" type="image/png" href="img/Nota.png">
 </head>
 <body>
     <div class="divSpaceBetween">
         <div>
-            <button class="btnBarraSuperior" onclick="mostrarSubirArchivo()">Subir Audios</button>
+            <button class="btnBarraSuperior" onclick="mostrarSubirArchivo()">Subir</button>
             <button class="btnBarraSuperior" onclick="mostrarCrearLista()">Lista</button>
+            <button class="btnBarraSuperior" id="btnHistorial" onclick="mostrarHistorial()">Historial</button>
             <button class="btnBarraSuperior" onclick="mostrarConfiguaracion()">Configuración</button>
         </div>
         <button class="btnBarraSuperior" id="btnLista" onclick="OcultarCancionLista()">Cerrar</button>
@@ -46,19 +63,109 @@
                 <h2 id="tituloAudio">[TÍTULO]</h2>
             </div>
             <div>
-                <audio controls id="audio"><source src=""></audio>
+                <audio id="audio"><source src=""></audio>
+                <div id="divBarra"><div id="Barra"></div></div>
+                <div id="divTiempoActual"><span id="tiempoActual">0:00</span> / <span id="duracion">0:00</span></div>
             </div>
+            <script>
+                // Barra de progreso
+                function actualizarBarra() {
+                    const Audio = document.getElementById("audio");
+                    const divBarra = document.getElementById("divBarra");
+                    const Barra = document.getElementById("Barra");
+
+                    let presionando = false;
+
+                    // Actualiza la barra mientras el audio avanza
+                    Audio.addEventListener("timeupdate", () => {
+                        const porcentaje = (Audio.currentTime / Audio.duration) * 100;
+                        Barra.style.width = porcentaje + "%";
+                    });
+
+                    function actualizarTiempo(e){
+                        const rect = divBarra.getBoundingClientRect();
+                        const posicion = e.clientX - rect.left;
+                        const porcentaje = Math.max(0, Math.min(1, posicion / rect.width));
+                        Audio.currentTime = porcentaje * Audio.duration;
+                    }
+
+                    // Actualiza tiempo actual
+                    Audio.addEventListener("timeupdate", () => {
+                        const minutos = Math.floor(Audio.currentTime / 60);
+                        const segundos = Math.floor(Audio.currentTime % 60);
+                        document.getElementById("tiempoActual").textContent =
+                            `${minutos}:${segundos < 10 ? "0" : ""}${segundos}`;
+                    });
+
+                    Audio.addEventListener("loadedmetadata", () => {
+                        const minutos = Math.floor(Audio.duration / 60);
+                        const segundos = Math.floor(Audio.duration % 60);
+                        document.getElementById("duracion").textContent =
+                            `${minutos}:${segundos < 10 ? "0" : ""}${segundos}`;
+                    });
+
+                    // Cuando empieza a pulsar
+                    divBarra.addEventListener("mousedown", (e) => {
+                        presionando = true;
+                        actualizarTiempo(e);
+                    });
+
+                    // Mientras mueve el ratón
+                    document.addEventListener("mousemove", (e) => {
+                        if(presionando){
+                            actualizarTiempo(e);
+                        }
+                    });
+
+                    // Cuando suelta el botón
+                    document.addEventListener("mouseup", () => {
+                        presionando = false;
+                    });
+                }
+                actualizarBarra()
+
+                ///////////////////////////////////////////////////////
+
+                // Avanzar a la siguiente canción al terminar
+                document.getElementById("audio").addEventListener("ended", function () {
+                    // Si el bucle está activado o siguiente desactivado, no avanzar
+                    if (!btn_Lista.Bucle && btn_Lista.Siguiente) {
+                        // Si NO es la última canción
+                        if (btn_Lista.N_Cancion < Lista.length - 1) {
+                            btn_Lista.N_Cancion++;
+
+                            // Control de paginación
+                            if (btn_Lista.N_Cancion + 1 > btn_Lista.Max) {
+                                paginación(1);
+                            }
+
+                            reproducirAudio(btn_Lista.N_Cancion, btn_Lista.N_Cancion);
+                        } else {
+                            if (btn_Lista.SiguienteBucle) {
+                                // Si es la última, volver a la primera
+                                btn_Lista.N_Cancion = 0;
+                                btn_Lista.Pag = 1;
+                                btn_Lista.Min = 0;
+                                btn_Lista.Max = 20;
+                                paginación(2);
+                                reproducirAudio(btn_Lista.N_Cancion, btn_Lista.N_Cancion);
+                            }
+                        }
+                    }
+                });
+            </script>
             <div id="div_btn">
                 <button title="Reiniciar" onclick="audioReiniciar()" class="btn_controls">↩︎</button>
-                <button title="Bucle" onclick="audioBucle()" id="btn_Bucle" class="btn_controls">↻</button>
+                <button title="Bucle" onclick="audioBucle()" id="btn_Bucle" class="btn_controls btn_controls_Red">⟳</button>
                 <button title="Pausar" onclick="audioPlay()" id="btn_Play" class="btn_controls">▶</button>
-                <button title="Activar Continuar" onclick="audioContinue()" id="btn_Continuar" class="btn_controls">➤</button>
+                <button title="Activar Continuar" onclick="audioContinue()" id="btn_Continuar" class="btn_controls btn_controls_Red">➤</button>
+                <button title="Activar Bucle de Continuar" onclick="audioContinueBucle()" id="btn_SiguienteBucle" class="btn_controls btn_controls_Red">↺</button>
             </div>
         </div>
 
         <div id="containerBotones">
             <div id="btn_botones">
-                <button onclick="reproducirAudio(0)" class="btn_musica"></button>
+                <button onclick="reproducirAudio(0, 0)" class="btn_musica"></button>
             </div>
 
             <div id="cambioCacnion">
@@ -70,9 +177,13 @@
                 <button title="Anterior Pagína" class="btn_controls" onclick="paginación(0)">⭅</button>
                 <div id="div_paginaActual"><span id="paginaActual">1</span></div>
                 <button title="Proxima Pagína" class="btn_controls" onclick="paginación(1)">⭆</button>
+                <div>
+                    <button class="btn_controls" onclick="BuscarPaginaCancion()">⬇</button>
+                </div>
             </div>
         </div>
     </div>
+
     <!-- Sistema Lista -->
     <div id="div_ocultar">
         <div id="containerAudioLista">
@@ -81,19 +192,106 @@
                     <h2 id="tituloAudioLista">[TÍTULO]</h2>
                 </div>
                 <div>
-                    <audio controls id="audioLista"><source src=""></audio>
+                    <audio id="audioLista"><source src=""></audio>
+                    <div id="divBarraLista"><div id="BarraLista"></div></div>
+                    <div id="divTiempoActualLista"><span id="tiempoActualLista">0:00</span> / <span id="duracionLista">0:00</span></div>
+                    <script>
+                        function actualizarBarraLista() {
+                            const Audio = document.getElementById("audioLista");
+                            const divBarra = document.getElementById("divBarraLista");
+                            const Barra = document.getElementById("BarraLista");
+
+                            let presionando = false;
+                            
+                            // Actualiza la barra mientras el audio avanza
+                            Audio.addEventListener("timeupdate", () => {
+                                const porcentaje = (Audio.currentTime / Audio.duration) * 100;
+                                Barra.style.width = porcentaje + "%";
+                            });
+
+                            function actualizarTiempo(e){
+                                const rect = divBarra.getBoundingClientRect();
+                                const posicion = e.clientX - rect.left;
+                                const porcentaje = Math.max(0, Math.min(1, posicion / rect.width));
+                                Audio.currentTime = porcentaje * Audio.duration;
+                            }
+
+                            // Actualiza tiempo actual
+                            Audio.addEventListener("timeupdate", () => {
+                                const minutos = Math.floor(Audio.currentTime / 60);
+                                const segundos = Math.floor(Audio.currentTime % 60);
+                                document.getElementById("tiempoActualLista").textContent =
+                                    `${minutos}:${segundos < 10 ? "0" : ""}${segundos}`;
+                            });
+
+                            Audio.addEventListener("loadedmetadata", () => {
+                                const minutos = Math.floor(Audio.duration / 60);
+                                const segundos = Math.floor(Audio.duration % 60);
+                                document.getElementById("duracionLista").textContent =
+                                    `${minutos}:${segundos < 10 ? "0" : ""}${segundos}`;
+                            });
+
+                            // Cuando empieza a pulsar
+                            divBarra.addEventListener("mousedown", (e) => {
+                                presionando = true;
+                                actualizarTiempo(e);
+                            });
+
+                            // Mientras mueve el ratón
+                            document.addEventListener("mousemove", (e) => {
+                                if(presionando){
+                                    actualizarTiempo(e);
+                                }
+                            });
+
+                            // Cuando suelta el botón
+                            document.addEventListener("mouseup", () => {
+                                presionando = false;
+                            });
+                        }
+                        actualizarBarraLista()
+
+                        ///////////////////////////////////////////////////////
+
+                        // Avanzar a la siguiente canción al terminar
+                        document.getElementById("audioLista").addEventListener("ended", function () {
+                            // Si el bucle está activado o siguiente desactivado, no avanzar
+                            if (!btnLista.Bucle && btnLista.Siguiente) {
+                                // Si NO es la última canción
+                                if (btnLista.N_Cancion < Lista_Musica.Cargar.Nombre.length - 1) {
+                                    btnLista.N_Cancion++;
+
+                                    // Control de paginación
+                                    if (btnLista.N_Cancion + 1 > btnLista.Max) {
+                                        paginaciónLista(1);
+                                    }
+
+                                    reproducirAudioLista(btnLista.N_Cancion, btnLista.N_Cancion);
+                                } else if (btnLista.SiguienteBucle) {
+                                    // Si es la última, volver a la primera
+                                    btnLista.N_Cancion = 0;
+                                    btnLista.Pag = 1;
+                                    btnLista.Min = 0;
+                                    btnLista.Max = 20;
+                                    paginaciónLista(2);
+                                    reproducirAudioLista(0, 0);
+                                }
+                            }
+                        });
+                    </script>
                 </div>
                 <div id="div_btnLista">
                     <button title="Reiniciar" onclick="audioReiniciarLista()" class="btn_controls">↩︎</button>
-                    <button title="Bucle" onclick="audioBucleLista()" id="btn_BucleLista" class="btn_controls">↻</button>
+                    <button title="Bucle" onclick="audioBucleLista()" id="btn_BucleLista" class="btn_controls btn_controls_Red">⟳</button>
                     <button title="Pausar" onclick="audioPlayLista()" id="btn_PlayLista" class="btn_controls">▶</button>
-                    <button title="Activar Continuar" onclick="audioContinueLista()" id="btn_ContinuarLista" class="btn_controls">➤</button>
+                    <button title="Activar Continuar" onclick="audioContinueLista()" id="btn_ContinuarLista" class="btn_controls btn_controls_Red">➤</button>
+                    <button title="Activar Bucle de Continuar" onclick="audioContinueBucleLista()" id="btn_SiguienteBucleLista" class="btn_controls btn_controls_Red">↺</button>
                 </div>
             </div>
 
             <div id="containerBotonesLista">
                 <div id="btn_botonesLista">
-                    <button onclick="reproducirAudio(0)" class="btn_musica"></button>
+                    <button onclick="reproducirAudioLista(0, 0)" class="btn_musica"></button>
                 </div>
 
                 <div id="cambioCacnionLista">
@@ -105,166 +303,32 @@
                     <button title="Anterior Pagína" class="btn_controls" onclick="paginaciónLista(0)">⭅</button>
                     <div id="div_paginaActualLista"><span id="paginaActualLista">1</span></div>
                     <button title="Proxima Pagína" class="btn_controls" onclick="paginaciónLista(1)">⭆</button>
+                    <div>
+                        <button title="Poner una cancion aleatoria" class="btn_controls" onclick="aleatorioLista()">⤨</button>
+                        <button class="btn_controls" onclick="BuscarPaginaCancionLista()">⬇</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Ventana para actualizar la música -->
-    <div id="ventanaArchivo">
+    <div id="ventanaArchivo" class="ventana">
         <div id="contenidoArchivo">
             <h2>Subir Audios desde Carpeta</h2>
             <button class="CuboBlanco" id="btn-cargar">Cargar audios</button>
             <input type="file" id="input-folder" webkitdirectory multiple hidden><br><br>
             <button class="CuboBlanco" onclick="ocultarSubirArchivo()">Cerrar</button>
         </div>
-    </div>
+        <script>// Subir audios desde carpeta y guardar en localStorage
+            // Cargar lista al iniciar
+            Lista = JSON.parse(localStorage.getItem("Lista")) || [];
 
-    <!-- Ventana para crear lista de reproducción -->
-    <div id="alertaCrearLista">
-        <div id="contenidoCrearLista">
-            <h2>Lista</h2>
-            <div id="div_CrearLista">
-                <div class="divsCrearLista" id="ListaCreadas">
-                    <div id="ListasCreada">
-                        <div class="divSpaceBetween">
-                            <button onclick="CargarMusicaLista(0)">A</button>
-                            <div>
-                                <button onclick="EliminarLista(0)">🗑</button>
-                                <button onclick="EditarLista(0)">⚙︎</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="CuboBlanco" style="margin-top: 7.5px;" onclick="NuevaLista()">+</button>
-                </div>
-                <div class="divsCrearLista" id="divBuscador">
-                    <input type="search" id="buscadorLista" placeholder="Escribe para buscar..." autocomplete="off">
-                    <div id="resultados"></div>
-                </div>
-                <div class="divsCrearLista" id="CrearLista">
-                    <div id="divarribaCrearLista">
-                        Título: <input type="text" maxlength="50" id="tituloLista">
-                    </div>
-                    <div id="CancionAñadida"></div>
-                    <div>
-                        <button class="CuboBlanco" onclick="CancelarNuevaLista()">Cancelar</button>
-                        <button class="CuboBlanco" onclick="GuardarLista()" id="GuardarLista">Guardar</button>
-                        <div id="errorLista"></div>
-                    </div>
-                </div>
-                <div class="divsCrearLista" id="MostrarLista">
-                    <div id="div_MostrarTituloLista">
-                        <span id="MostrarTituloLista"></span>
-                    </div>
-                    <div id="MostrarMusica"></div>
-                    <button onclick="CerrarObservarLista()">Cerrar</button>
-                </div>
-            </div>
-            <button class="CuboBlanco" onclick="ocultarCrearLista()">Cerrar</button>
-        </div>
-    </div>
+            document.getElementById("btn-cargar").addEventListener("click", () => {
+                document.getElementById("input-folder").click();
+            });
 
-    <!-- Ventana para configurar cosas -->
-    <div id="ventanaConfiguracion">
-        <div id="contenidoConfiguracion">
-            <h2>CONFIGURACIÓN</h2>
-            <div style="display: flex; height: 85%; justify-content: space-around; margin-bottom: 2%;">
-                <div id="columnaConfiguracion">
-                    <button class="btnConfiguracion" onclick="cambiarConfiguaracion(1)">CONTROLES</button>
-                    <button class="btnConfiguracion" onclick="cambiarConfiguaracion(2)">COLORES</button>
-                </div>
-                <div id="aparicionventanasConfiguracion">
-                    <div id="configuracion_1" class="divConfiguracion">
-                        <div class="divisionConfiguarcion">
-                            <h3>Controles de Música</h3>
-                            <table>
-                                <tr>
-                                    <td>R</td>
-                                    <td><button class="btn_controls">↩︎</button></td>
-                                </tr>
-                                <tr>
-                                    <td>B</td>
-                                    <td><button id="btn_Bucle" class="btn_controls">↻</button></td>
-                                </tr>
-                                <tr>
-                                    <td>(Espacio)</td>
-                                    <td><button id="btn_Play" class="btn_controls">❙❙</button></td>
-                                </tr>
-                                <tr>
-                                    <td>S</td>
-                                    <td><button id="btn_Continuar" class="btn_controls">➤</button></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="divisionConfiguarcion">
-                            <h3>Controles de Cambio de Música</h3>
-                            <table>
-                                <tr>
-                                    <td>(flecha izquierda)</td>
-                                    <td><button class="btn_controls">⭅</button></td>
-                                </tr>
-                                <tr>
-                                    <td>(flecha derecha)</td>
-                                    <td><button class="btn_controls">⭆</button></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="divisionConfiguarcion">
-                            <h3>Controles de Cambio de Pagína</h3>
-                            <table>
-                                <tr>
-                                    <td>(flecha izquierda) + Ctrl</td>
-                                    <td><button class="btn_controls">⏮</button></td>
-                                </tr>
-                                <tr>
-                                    <td>(flecha derecha) + Ctrl</td>
-                                    <td><button class="btn_controls">⏭</button></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div id="configuracion_2" class="divConfiguracion">
-                        <table>
-                            <tr>
-                                <td><button class="btn_musica">Algo</button></td>
-                                <td>
-                                    <input type="color" value="#000000">
-                                    <input type="color" value="#ffffff">
-                                    <input type="color" value="#000000">
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <button class="CuboBlanco" onclick="ocultarConfiguaracion()">Cerrar</button>
-        </div>
-    </div>
-
-    <!-- Ventana para navegar -->
-    <div id="ventanaNavegador">
-        <div id="contenidoNavegador">
-            <h2>NAVEGAR</h2>
-            <div id="buscadorReproductor">
-                <input type="search" id="buscadorPlay" placeholder="Buscar canción para reproducir..." autocomplete="off" style="width: 50%;">
-                <div id="resultadosPlay"></div>
-            </div>
-            <button class="CuboBlanco" onclick="ocultarNavegador()">Cerrar</button>
-        </div>
-    </div>
-
-
-
-    <script>// Subir audios desde carpeta y guardar en localStorage
-        // Cargar lista al iniciar
-        Lista = JSON.parse(localStorage.getItem("Lista")) || [];
-
-        document.getElementById("btn-cargar").addEventListener("click", () => {
-            document.getElementById("input-folder").click();
-        });
-
-        document.getElementById("input-folder").addEventListener("change", async (event) => {
+            document.getElementById("input-folder").addEventListener("change", async (event) => {
             const files = [...event.target.files];
 
             const audioFiles = files.filter(file => file.type.startsWith("audio/"));
@@ -273,15 +337,14 @@
 
             for (const file of audioFiles) {
                 const objectURL = URL.createObjectURL(file);
-                const duration = await obtenerDuracion(objectURL);
 
-                const modifiedName = file.name.replace(/\.[^.]+$/, "") // Eliminar la extensión
-                                              .replace(/  /g, " / ")  // Reemplazar "  " por " / "
-                                              .replace(/_ /g, ": ");
+                const modifiedName = file.name.replace(/\.[^.]+$/, "")  // Eliminar la extensión
+                                                .replace(/  /g, " / ")    // Reemplazar "  " por " / "
+                                                .replace(/_ /g, ": ");
 
                 audioArray.push({
-                    nombre: file.name.replace(/\.[^.]+$/, "").replace(/  /g, " / ").replace(/_ /g, ": "),
-                    src: "../" + file.name,
+                    nombre: modifiedName,
+                    src: file.name,
                 });
 
                 URL.revokeObjectURL(objectURL);
@@ -293,131 +356,723 @@
 
             // 👉 Guardar en localStorage
             localStorage.setItem("Lista", JSON.stringify(audioArray));
-        });
 
-        function obtenerDuracion(url) {
-            return new Promise(resolve => {
-                const audio = document.createElement("audio");
-                audio.src = url;
-                audio.addEventListener("loadedmetadata", () => {
-                    resolve(audio.duration);
-                });
+            paginación(2)
             });
-        }
-    </script>
-    <script>// Poner siguiente canción automáticamente
-        document.getElementById("audio").addEventListener("ended", function () {
+        </script>
+    </div>
 
-            // Si el bucle está activado o siguiente desactivado, no avanzar
-            if (btn_Lista.Bucle === "on" || btn_Lista.Siguiente === "off") return;
+    <!-- Ventana para lista de reproducción -->
+    <div id="ventanaCrearLista" class="ventana">
+        <div id="contenidoCrearLista" class="contenidoVentanas">
+            <h2>Lista</h2>
+            <div id="div_CrearLista">
+                <!-- Ver las listas creadas -->
+                <div id="ListaCreadas">
+                    <div id="div_BotonesLista">
+                        <div>
+                            <input type="search" id="buscadorLista" placeholder="Escribe para buscar..." autocomplete="off">
+                        </div>
+                        <div id="accionesCentro">
+                            <button class="CuboBlanco" onclick="AleatorioLista()" title="Escojer una lista aleatoria">⤨</button>
+                            <button class="CuboBlanco" onclick="NuevaLista()" title="Crear nueva lista">+</button>
+                            <button id="btnTemporal" class="CuboBlanco" onclick="ListaTemporal()" title="Crear una lista temporal">⧗</button>
+                        </div>
+                        <div>
+                            <button id="Boton_ReproducirLista" class="Boton_ReproducirLista_active" title="Reproducir Lista" onclick="CambiarClaseBoton('ReproducirLista')">▶</button>
+                            <button id="Boton_BorrarLista" class="CuboBlanco" title="Borrar Lista" onclick="CambiarClaseBoton('BorrarLista')">🗑</button>
+                            <button id="Boton_VerLista" class="CuboBlanco" title="Ver Lista" onclick="CambiarClaseBoton('VerLista')">👁️</button>
+                            <button id="Boton_ConfigurarLista" class="CuboBlanco" title="Configurar Lista" onclick="CambiarClaseBoton('ConfigurarLista')">⚙︎</button>
+                        </div>
+                    </div>
+                    <div id="div_ListasCreada">
+                        <div id="ListasCreada"></div>
+                        <div id="resultados" style="display: none;"></div>
+                    </div>
+                    <script>
+                        function CambiarClaseBoton(i) {
+                            
 
-            // Si NO es la última canción
-            if (btn_Lista.N_Cancion < Lista.length - 1) {
-                btn_Lista.N_Cancion++;
+                            document.getElementById("Boton_ReproducirLista").classList.replace("Boton_ReproducirLista_active", "CuboBlanco");
+                            document.getElementById("Boton_BorrarLista").classList.replace("Boton_BorrarLista_active", "CuboBlanco");
+                            document.getElementById("Boton_VerLista").classList.replace("Boton_VerLista_active", "CuboBlanco");
+                            document.getElementById("Boton_ConfigurarLista").classList.replace("Boton_ConfigurarLista_active", "CuboBlanco");
 
-                // Control de paginación
-                if (btn_Lista.N_Cancion + 1 > btn_Lista.Max) {
-                    paginación(1);
+                            switch (i) {
+                                case 'ReproducirLista':
+                                    BTN_Lista = ['BotonLista_ReproducirLista', 'BotonLista_BorrarLista', 'BotonLista_VerLista', 'BotonLista_ConfigurarLista'];
+                                    funcionOnClick = "CargarMusicaLista";
+                                    document.getElementById("Boton_ReproducirLista").classList.replace("CuboBlanco", "Boton_ReproducirLista_active");
+                                    break;
+                                case 'BorrarLista':
+                                    BTN_Lista = ['BotonLista_BorrarLista', 'BotonLista_ReproducirLista', 'BotonLista_VerLista', 'BotonLista_ConfigurarLista'];
+                                    funcionOnClick = "MostrarEliminarLista";
+                                    document.getElementById("Boton_BorrarLista").classList.replace("CuboBlanco", "Boton_BorrarLista_active");
+                                    break;
+                                case 'VerLista':
+                                    BTN_Lista = ['BotonLista_VerLista', 'BotonLista_ReproducirLista', 'BotonLista_BorrarLista', 'BotonLista_ConfigurarLista'];
+                                    funcionOnClick = "ObservarLista";
+                                    document.getElementById("Boton_VerLista").classList.replace("CuboBlanco", "Boton_VerLista_active");
+                                    break;
+                                case 'ConfigurarLista':
+                                    BTN_Lista = ['BotonLista_ConfigurarLista', 'BotonLista_ReproducirLista', 'BotonLista_BorrarLista', 'BotonLista_VerLista'];
+                                    funcionOnClick = "EditarLista";
+                                    document.getElementById("Boton_ConfigurarLista").classList.replace("CuboBlanco", "Boton_ConfigurarLista_active");
+                                    break;
+                            }
+
+                            const botones = document.querySelectorAll(
+                                '#ListasCreada button, #resultados button'
+                            );
+
+                            botones.forEach(boton => {
+
+                                boton.classList.remove(
+                                    'BotonLista_ReproducirLista',
+                                    'BotonLista_BorrarLista',
+                                    'BotonLista_VerLista',
+                                    'BotonLista_ConfigurarLista'
+                                );
+
+                                boton.classList.add(BTN_Lista[0]);
+
+                                const index = boton.dataset.index ??
+                                            boton.id.split('_').pop();
+
+                                boton.onclick = () => {
+                                    window[funcionOnClick](Number(index));
+                                };
+                            });
+                        }
+
+
+                        
+                        document.getElementById("buscadorLista").addEventListener("input", function () {
+
+                            const texto = this.value.trim().toLowerCase();
+
+                            const ListasCreada = document.getElementById("ListasCreada");
+                            const resultados = document.getElementById("resultados");
+                            const accionesCentro = document.getElementById("accionesCentro");
+                            const buscador = document.getElementById("buscadorLista");
+
+                            // No hay búsqueda
+                            if (texto === "") {
+
+                                ListasCreada.style.display = "block";
+                                resultados.style.display = "none";
+                                resultados.innerHTML = "";
+
+                                accionesCentro.style.display = "flex";
+
+                                buscador.style.width = "200px";
+
+                                for (let j = 0; j < Lista_Musica.Guardado.length; j++) {
+                                    const boton = document.getElementById("BotonListaReproduccion_" + j);
+
+                                    boton.classList.add(BTN_Lista[0]);
+                                    boton.classList.remove(BTN_Lista[1]);
+                                    boton.classList.remove(BTN_Lista[2]);
+                                    boton.classList.remove(BTN_Lista[3]);
+
+                                    // Cambiar onclick
+                                    boton.setAttribute("onclick", `${funcionOnClick}(${j})`);
+                                }
+
+                                return;
+                            }
+
+                            // Hay búsqueda
+
+                            ListasCreada.style.display = "none";
+                            resultados.style.display = "block";
+
+                            accionesCentro.style.display = "none";
+
+                            buscador.style.width = "600px";
+
+                            resultados.innerHTML = "";
+
+                            const filtrados = Lista_Musica.Guardado
+                                .map((obj, index) => ({ obj, index }))
+                                .filter(item =>
+                                    item.obj.Titulo.toLowerCase().includes(texto)
+                                );
+
+                            filtrados.forEach(item => {
+
+                                const btn = document.createElement("button");
+
+                                btn.textContent = item.obj.Titulo;
+                                btn.className = BTN_Lista[0];
+                                btn.dataset.index = item.index;
+                                btn.onclick = () => {
+                                    window[funcionOnClick](item.index);
+                                };
+                                btn.id = "BotonListaReproduccionBusqueda_" + item.index;
+
+                                resultados.appendChild(btn);
+                            });
+
+                            for (let j = 0; j < Lista_Musica.Guardado.length; j++) {
+                                const boton = document.getElementById("BotonListaReproduccionBusqueda_" + j);
+
+                                if (boton) {
+                                    boton.classList.add(BTN_Lista[0]);
+                                    boton.classList.remove(BTN_Lista[1]);
+                                    boton.classList.remove(BTN_Lista[2]);
+                                    boton.classList.remove(BTN_Lista[3]);
+
+                                    // Cambiar onclick
+                                    boton.setAttribute("onclick", `${funcionOnClick}(${j})`);
+                                }
+                            }
+                        });
+                    </script>
+
+                    <!-- Ventana para eliminar lista -->
+                    <div id="ventanaEliminarLista" class="ventana">
+                        <div id="contenidoEliminarLista">
+                            <h2>¿Eliminar lista?</h2>
+                            <button id="btnEliminarLista" onclick="EliminarLista(0)">Eliminar</button><br><br>
+                            <button class="CuboBlanco" onclick="CancelarEliminarLista()">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crear lista -->
+                <div class="divsCrearLista" id="divBuscador"><!-- Buscar canción -->
+                    <input type="search" id="buscadorListaCreando" placeholder="Escribe para buscar..." autocomplete="off">
+                    <div id="resultadosListaCreando"></div>
+                    <script>
+                        document.getElementById("buscadorListaCreando").addEventListener("input", function() {
+                            const texto = this.value.toLowerCase();
+                            const contenedor = document.getElementById("resultadosListaCreando");
+                            contenedor.innerHTML = "";
+
+                            if (texto.trim() === "") return;
+
+                            // Filtrado con índice real del array
+                            const filtrados = Lista
+                                .map((obj, i) => ({ obj, index: i })) // guardamos el índice
+                                .filter(item => item.obj.nombre.toLowerCase().includes(texto))
+                                .slice(0, 40);
+
+                            filtrados.forEach(item => {
+                                const btn = document.createElement("button");
+                                btn.textContent = item.obj.nombre;
+                                btn.classList.add("CuboBlanco_Lista");
+
+                                // onclick enviando el índice real
+                                btn.onclick = () => AñadirCancion(item.index, "Crear");
+
+                                contenedor.appendChild(btn);
+                            });
+                        });
+                    </script>
+                </div>
+                <!-- Crear lista -->
+                <div class="divsCrearLista" id="CrearLista">
+                    <div class="divarribaLista">
+                        <div>
+                            Título: <input type="text" maxlength="50" id="tituloLista" class="titulo">
+                        </div>
+                        <div>
+                            <button class="CuboBlanco" onclick="OrdenarCanciónLista(undefined, 'Crear')">➤</button>
+                            <select id="ordenarListaCrear" class="ordenar">
+                                <option value="A-Z" title="Ordenar de la A a la Z">A-Z</option>
+                                <option value="Z-A" title="Ordenar de la Z a la A">Z-A</option>
+                                <option value="⤨" title="Aleatorizar">⤨</option>
+                                <option value="Invertir" title="Invertir orden">Invertir</option>
+                            </select> 
+                        </div>
+                    </div>
+                    <div id="CancionAñadida" class="divCancionesLista"></div>
+                    <div>
+                        <button class="CuboBlanco" onclick="CancelarNuevaLista()">Cancelar</button>
+                        <button class="CuboBlanco" onclick="GuardarLista()" id="GuardarLista">Guardar</button>
+                        <div id="errorLista"></div>
+                    </div>
+                </div>
+
+                <!-- Mostrar contenido de lista creada -->
+                <div class="divsCrearLista" id="MostrarLista">
+                    <div id="div_MostrarTituloLista">
+                        <span id="MostrarTituloLista"></span>
+                    </div>
+                    <div id="MostrarMusica"></div>
+                    <button class="CuboBlanco" onclick="CerrarObservarLista()">Cerrar</button>
+                </div>
+
+                <!-- Editar lista -->
+                <div class="divsCrearLista" id="divEditarBuscador"><!-- Buscar canción para editar -->
+                    <input type="search" id="buscadorEditarLista" placeholder="Escribe para buscar..." autocomplete="off">
+                    <div id="resultadosEditar"></div>
+                    <script>
+                        document.getElementById("buscadorEditarLista").addEventListener("input", function() {
+                            const texto = this.value.toLowerCase();
+                            const contenedor = document.getElementById("resultadosEditar");
+                            contenedor.innerHTML = "";
+
+                            if (texto.trim() === "") return;
+
+                            // Filtrado con índice real del array
+                            const filtrados = Lista
+                                .map((obj, i) => ({ obj, index: i })) // guardamos el índice
+                                .filter(item => item.obj.nombre.toLowerCase().includes(texto))
+                                .slice(0, 40);
+
+                            filtrados.forEach(item => {
+                                const btn = document.createElement("button");
+                                btn.textContent = item.obj.nombre;
+                                btn.classList.add("CuboBlanco_Lista");
+
+                                // onclick enviando el índice real
+                                btn.onclick = () => AñadirCancion(item.index, "Editar");
+
+                                contenedor.appendChild(btn);
+                            });
+                        });
+                    </script>
+                </div>
+                <div class="divsCrearLista" id="EditarLista"><!-- Editar lista -->
+                    <div class="divarribaLista">
+                        <div>
+                            Título: <input type="text" maxlength="50" id="tituloListaEditar" class="titulo">
+                        </div>
+                        <div>
+                            <button class="CuboBlanco" onclick="OrdenarCanciónLista(undefined, 'Editar')">➤</button>
+                            <select id="ordenarListaEditar" class="ordenar">
+                                <option value="A-Z" title="Ordenar de la A a la Z">A-Z</option>
+                                <option value="Z-A" title="Ordenar de la Z a la A">Z-A</option>
+                                <option value="⤨" title="Aleatorizar">⤨</option>
+                                <option value="Invertir" title="Invertir">Invertir</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="CancionAñadidaEditar" class="divCancionesLista"></div>
+                    <div>
+                        <button class="CuboBlanco" onclick="CancelarEditarLista()">Cancelar</button>
+                        <button class="CuboBlanco" onclick="GuardarEditarLista()" id="GuardarEditarLista">Guardar</button>
+                        <div id="errorListaEditar"></div>
+                    </div>
+                </div>
+
+                <!-- Crear lista temporal -->
+                <div class="divsCrearLista" id="divBuscadorTemporal"><!-- Buscar canción -->
+                    <div class="divSpaceBetween">
+                        <button id="btnCancion" onclick="CambiarBTNTemporal(1)">Canción</button>
+                        <button id="btnListas" onclick="CambiarBTNTemporal(2)">Listas</button>
+                    </div>
+                    <div id="divSearchCancion">
+                        <input type="search" id="buscadorListaCanciónTemporal" placeholder="Escribe para buscar..." autocomplete="off">
+                        <div id="resultadosCanciónTemporal"></div>
+                        <script>
+                            document.getElementById("buscadorListaCanciónTemporal").addEventListener("input", function() {
+                                const texto = this.value.toLowerCase();
+                                const contenedor = document.getElementById("resultadosCanciónTemporal");
+                                contenedor.innerHTML = "";
+
+                                if (texto.trim() === "") return;
+
+                                // Filtrado con índice real del array
+                                const filtrados = Lista
+                                    .map((obj, i) => ({ obj, index: i })) // guardamos el índice
+                                    .filter(item => item.obj.nombre.toLowerCase().includes(texto))
+                                    .slice(0, 40);
+
+                                filtrados.forEach(item => {
+                                    const btn = document.createElement("button");
+                                    btn.textContent = item.obj.nombre;
+                                    btn.classList.add("CuboBlanco_Lista");
+
+                                    // onclick enviando el índice real
+                                    btn.onclick = () => AñadirCancionTemporal(item.index);
+
+                                    contenedor.appendChild(btn);
+                                });
+                            });
+                        </script>
+                    </div>
+                    <div id="divSearchLista">
+                        <div style="margin-top: 10px;">
+                            <button class="CuboBlanco" onclick="Agregar()">Agregar</button>
+                        </div>
+                        <div id="resultadosListaTemporal"></div>
+                    </div>
+                </div>
+                <div class="divsCrearLista" id="CrearListaTemporal"><!-- Crear lista -->
+                    <div class="divarribaLista">
+                        <button id="btnBorrarListaTemporal" onclick="BorrarLista(1)" title="Borra toda la lista.">🗑</button>
+                        <div>Total: <span id="totalCancionesTemporal">0</span></div>
+                        <div>
+                            <button class="CuboBlanco" onclick="OrdenarCanciónListaTemporal()">➤</button>
+                            <select id="ordenarListaTemporal" class="ordenar">
+                                <option value="A-Z" title="Ordenar de la A a la Z">A-Z</option>
+                                <option value="Z-A" title="Ordenar de la Z a la A">Z-A</option>
+                                <option value="⤨" title="Aleatorizar">⤨</option>
+                                <option value="Invertir" title="Invertir">Invertir</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="CancionAñadidaTemporal" class="divCancionesLista"></div>
+                    <div>
+                        <button class="CuboBlanco" onclick="CancelarListaTemporal()">Cancelar</button>
+                        <button class="CuboBlanco" onclick="ReproducirListaTemporal(0)" id="GuardarLista">Reproducir</button>
+                    </div>
+                </div>
+            </div>
+            <button class="CuboBlanco" onclick="ocultarCrearLista()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Ventana para configurar cosas -->
+    <div id="ventanaConfiguracion" class="ventana">
+        <div id="contenidoConfiguracion" class="contenidoVentana">
+            <h2>CONFIGURACIÓN</h2>
+            <div style="display: flex; height: 85%; justify-content: space-around; margin-bottom: 2%;">
+                <div id="columnaConfiguracion">
+                    <button class="btnConfiguracion" onclick="cambiarConfiguaracion(1)">CONTROLES</button>
+                    <button class="btnConfiguracion" onclick="cambiarConfiguaracion(2)">PREFERENCIAS</button>
+                    <button class="btnConfiguracion" onclick="cambiarConfiguaracion(3)">FORMATEAR</button>
+                </div>
+                <div id="aparicionventanasConfiguracion">
+                    <div id="configuracion_1" class="divConfiguracion">
+                        <div class="divisionConfiguarcion">
+                            <h3>Controles de Música</h3>
+                            <table>
+                                <tr>
+                                    <td>Retroceder</td>
+                                    <td>R</td>
+                                    <td><button class="btn_controls">↩︎</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Bucle</td>
+                                    <td>B</td>
+                                    <td><button class="btn_controls btn_controls_Red">↻</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Reproducir/Pausar</td>
+                                    <td>(Espacio)</td>
+                                    <td><button class="btn_controls">❙❙</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Siguiente</td>
+                                    <td>S</td>
+                                    <td><button class="btn_controls btn_controls_Red">➤</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Retroceder</td>
+                                    <td>Ctrl + S</td>
+                                    <td><button class="btn_controls btn_controls_Red">↺</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="divisionConfiguarcion">
+                            <h3>Controles de Cambio de Pagína</h3>
+                            <table>
+                                <tr>
+                                    <td>Cambiar a la página anterior</td>
+                                    <td>(flecha izquierda) + Ctrl</td>
+                                    <td><button class="btn_controls">⏮</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Cambiar a la página siguiente</td>
+                                    <td>(flecha derecha) + Ctrl</td>
+                                    <td><button class="btn_controls">⏭</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="divisionConfiguarcion">
+                            <h3>Controles de Cambio de Música</h3>
+                            <table>
+                                <tr>
+                                    <td>Cambiar a la canción anterior</td>
+                                    <td>(flecha izquierda)</td>
+                                    <td><button class="btn_controls">⭅</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Cambiar a la canción siguiente</td>
+                                    <td>(flecha derecha)</td>
+                                    <td><button class="btn_controls">⭆</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="configuracion_2" class="divConfiguracion">
+                        <div class="divPreferencias">
+                            <div><!-- Preferencias relacionas con el tiempo -->
+                                <h3>Preferencias de Tiempo</h3>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_1" onclick="cargarPreferencias('prefe_1')">Se muestre la barra de tiempo.</label>
+                                    <input type="checkbox" id="prefe_1" name="prefe_1" class="checkboxPreferencias" checked onclick="cargarPreferencias('prefe_1')">
+                                </div>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_2" onclick="cargarPreferencias('prefe_2')">Se muestre la barra de tiempo de las listas.</label>
+                                    <input type="checkbox" id="prefe_2" name="prefe_2" class="checkboxPreferencias" checked onclick="cargarPreferencias('prefe_2')">
+                                </div>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_3" onclick="cargarPreferencias('prefe_3')">Se muestre el tiempo de reproducción.</label>
+                                    <input type="checkbox" id="prefe_3" name="prefe_3" class="checkboxPreferencias" checked onclick="cargarPreferencias('prefe_3')">
+                                </div>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_4" onclick="cargarPreferencias('prefe_4')">Se muestre el tiempo de reproducción de las listas.</label>
+                                    <input type="checkbox" id="prefe_4" name="prefe_4" class="checkboxPreferencias" checked onclick="cargarPreferencias('prefe_4')">
+                                </div>
+                            </div>
+                            <div><!-- Preferencias relacionas con el bucle -->
+                                <h3>Preferencias de Bucle</h3>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_5" onclick="cargarPreferencias('prefe_5')">Activar bucle la canción al iniciar.</label >
+                                    <input type="checkbox" id="prefe_5" name="prefe_5" class="checkboxPreferencias" onclick="cargarPreferencias('prefe_5')">
+                                </div>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_6" onclick="cargarPreferencias('prefe_6')">Activar siguiente canción.</label>
+                                    <input type="checkbox" id="prefe_6" name="prefe_6" class="checkboxPreferencias" onclick="cargarPreferencias('prefe_6')">
+                                </div>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_7" onclick="cargarPreferencias('prefe_7')">Activar bucle todas las canciones.</label>
+                                    <input type="checkbox" id="prefe_7" name="prefe_7" class="checkboxPreferencias" onclick="cargarPreferencias('prefe_7')" disabled>
+                                </div>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_8" onclick="cargarPreferencias('prefe_8')">Activar bucle la canción en la lista.</label>
+                                    <input type="checkbox" id="prefe_8" name="prefe_8" class="checkboxPreferencias" onclick="cargarPreferencias('prefe_8')">
+                                </div>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_9" onclick="cargarPreferencias('prefe_9')">Activar siguiente canción en la lista.</label>
+                                    <input type="checkbox" id="prefe_9" name="prefe_9" class="checkboxPreferencias" onclick="cargarPreferencias('prefe_9')">
+                                </div>
+                                <div class="opcion">
+                                    <label class="labelCheckbox" for="prefe_10" onclick="cargarPreferencias('prefe_10')">Activar bucle todas las canciones en la lista.</label>
+                                    <input type="checkbox" id="prefe_10" name="prefe_10" class="checkboxPreferencias" onclick="cargarPreferencias('prefe_10')" disabled>
+                                </div>
+                            </div>
+                            <div><!-- Preferencias al iniciar -->
+                                <h3>Preferencias al iniciar</h3>
+                                <div class="opcion">
+                                    <label for="prefe_11" onclick="cargarPreferencias('prefe_11')">Al iniciar se reproduzca una canción</label>
+                                    <input type="checkbox" id="prefe_11" name="prefe_11" class="checkboxPreferencias" onclick="cargarPreferencias('prefe_11', 'prefe_11_1')">
+                                    <div class="opcion_radio" id="opciones_1" style="display: none; margin-left: 20px;">
+                                        <label><input id="prefe_11_1" type="radio" name="opciones_1" onclick="cargarPreferencias('prefe_11', 'prefe_11_1')">La primera canción de la lista</label><br>
+                                        <label><input id="prefe_11_2" type="radio" name="opciones_1" onclick="cargarPreferencias('prefe_11', 'prefe_11_2')">La última canción de la lista</label><br>
+                                        <label><input id="prefe_11_3" type="radio" name="opciones_1" onclick="cargarPreferencias('prefe_11', 'prefe_11_3')">Una canción aleatoria</label><br>
+                                        <label><input id="prefe_11_4" type="radio" name="opciones_1" onclick="cargarPreferencias('prefe_11', 'prefe_11_4')">La última canción del historial</label><br>
+                                        <label><input id="prefe_11_5" type="radio" name="opciones_1" onclick="cargarPreferencias('prefe_11', 'prefe_11_5')">Una canción especifica</label>
+                                    </div>
+                                </div>
+                                <div class="opcion">
+                                    <label for="prefe_13" onclick="cargarPreferencias('prefe_13')">Al iniciar poner la lista temporal</label>
+                                    <input type="checkbox" id="prefe_13" name="prefe_13" class="checkboxPreferencias" onclick="cargarPreferencias('prefe_13', 'prefe_13_1')">
+                                    <div class="opcion_radio" id="opciones_2" style="display: none; margin-left: 20px;">
+                                        <label><input id="prefe_12" type="checkbox" name="opciones_2" onclick="cargarPreferencias('prefe_12')">Aleatorizar lista temporal</label><br>
+                                        Poner la lista temporal al iniciar:<br>
+                                        <label><input id="prefe_13_1" type="radio" name="opciones_2" onclick="cargarPreferencias('prefe_13', 'prefe_13_1')" checked>Ninguna</label><br>
+                                        <label><input id="prefe_13_2" type="radio" name="opciones_2" onclick="cargarPreferencias('prefe_13', 'prefe_13_2')">La primera canción de la lista</label><br>
+                                        <label><input id="prefe_13_3" type="radio" name="opciones_2" onclick="cargarPreferencias('prefe_13', 'prefe_13_3')">Una canción aleatoria</label><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3>Directorio de Música</h3>
+                                <div>
+                                    <input type="text" id="prefe_14" placeholder="C:\Users\User\Music\" oninput="cargarPreferencias('prefe_14')" value="C:\\Users\\User\\Music\\">
+                                    <button onclick="cargarPreferencias('prefe_14')">Guardar</button>
+                                </div>
+                            </div>
+
+                            <button onclick="resetearPreferencias()">RESETEAR PREFERENCIAS</button>
+                        </div>
+                    </div>
+
+                    <div id="configuracion_3" class="divConfiguracion">
+                        <div class="divisionConfiguarcion">
+                            <button class="formatear" onclick="formatear('lista_canciones')">FORMATEAR LISTA DE CANCIONES</button>
+                            <button class="formatear" onclick="formatear('lista_reproduccion')">FORMATEAR LISTA DE REPRODUCCIÓN</button>
+                            <button class="formatear"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="CuboBlanco" onclick="ocultarConfiguaracion()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Ventana para navegar -->
+    <div id="ventanaNavegador" class="ventana">
+        <div id="contenidoNavegador" class="contenidoVentanas">
+            <h2>NAVEGAR</h2>
+            <div id="buscadorReproductor">
+                <input type="search" id="buscadorPlay" placeholder="Buscar canción para reproducir..." autocomplete="off" style="width: 50%;">
+                <div id="resultadosPlay"></div>
+                <script>// Navegador de canciones
+                    document.getElementById("buscadorPlay").addEventListener("input", function() {
+                        const texto = this.value.toLowerCase();
+                        const contenedor = document.getElementById("resultadosPlay");
+                        contenedor.innerHTML = "";
+
+                        if (texto.trim() === "") return;
+
+                        const filtrados = Lista
+                            .map((obj, i) => ({ obj, index: i }))
+                            .filter(item => item.obj.nombre.toLowerCase().includes(texto))
+                            .slice(0, 60);
+
+                        filtrados.forEach(item => {
+                            const btn = document.createElement("button");
+                            btn.textContent = item.obj.nombre;
+                            btn_Lista.N_Cancion = item.index;
+                            btn.classList.add("btn_musica2");
+                            
+
+                            btn.onclick = () => {
+                                reproducirAudio(item.index);
+                                BuscarPaginaCancion();
+                            };
+
+                            contenedor.appendChild(btn);
+                        });
+                    });
+                </script>
+            </div>
+            <button class="CuboBlanco" onclick="ocultarNavegador()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Ventana para el historial -->
+    <div id="ventanaHistorial" class="ventana">
+        <div id="contenidoHistorial">
+            <h2>HISTORIAL</h2>
+            <button id="BorrarHistorial" onclick="mostrarBorrarHistorial()" title="Borrar Historial">Borrar</button>
+            <div id="listaHistorial">
+                <!-- Los elementos del historial se mostrarán aquí -->
+            </div>
+            <div style="margin-top: 10px;">
+                <button class="CuboBlanco" onclick="ocultarHistorial()">Cerrar</button>
+            </div>
+            <div id="ventanaBorrarHistorial" class="ventana">
+                <div id="contenidoBorrarHistorial">
+                    <h2>¿Borrar historial?</h2>
+                    <button id="btnBorrarHistorialConfirmar" onclick="BorrarHistorial()">Borrar</button><br><br>
+                    <button onclick="ocultarBorrarHistorial()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>// Botón de reproducción
+        // Control de reproducción
+        function controlPlay() {// Reproducir y pausar audio
+            const audio = document.getElementById("audio");
+            const btnPlay = document.getElementById("btn_Play");
+
+            // Click del botón
+            function audioPlay() {
+                if (audio.ended) {
+                    audio.currentTime = 0;
+                    audio.play();
+                } else if (audio.paused) {
+                    audio.play();
+                } else {
+                    audio.pause();
                 }
-
-                reproducirAudio(btn_Lista.N_Cancion);
-            } else {
-                // Si es la última, volver a la primera
-                btn_Lista.N_Cancion = 0;
-                btn_Lista.Pag = 1;
-                btn_Lista.Min = 0;
-                btn_Lista.Max = 20;
-                paginación(2);
-                reproducirAudio(btn_Lista.N_Cancion);
             }
-        });
-    </script>
-    <script>// Buscador para crear Lista
-        // Función que se ejecuta al hacer clic
-        function seleccionarElemento(index) {
-            const item = Lista[index];
-            alert("Seleccionaste: " + item.nombre + "\nÍndice: " + index);
-        }
 
-        // ------------------------------------
-        // Buscador con botones
-        // ------------------------------------
-        document.getElementById("buscadorLista").addEventListener("input", function() {
-            const texto = this.value.toLowerCase();
-            const contenedor = document.getElementById("resultados");
-            contenedor.innerHTML = "";
-
-            if (texto.trim() === "") return;
-
-            // Filtrado con índice real del array
-            const filtrados = Lista
-                .map((obj, i) => ({ obj, index: i })) // guardamos el índice
-                .filter(item => item.obj.nombre.toLowerCase().includes(texto))
-                .slice(0, 40);
-
-            filtrados.forEach(item => {
-                const btn = document.createElement("button");
-                btn.textContent = item.obj.nombre;
-
-                // onclick enviando el índice real
-                btn.onclick = () => AñadirCancion(item.index);
-
-                contenedor.appendChild(btn);
+            // Cuando empieza a reproducir
+            audio.addEventListener("play", () => {
+                btnPlay.textContent = "❙❙";
+                btnPlay.title = "Pausar";
+                btn_Lista.Play = "on";
             });
-        });
-    </script>
-    <script>// Navegador de canciones
-        document.getElementById("buscadorPlay").addEventListener("input", function() {
-            const texto = this.value.toLowerCase();
-            const contenedor = document.getElementById("resultadosPlay");
-            contenedor.innerHTML = "";
 
-            if (texto.trim() === "") return;
-
-            const filtrados = Lista
-                .map((obj, i) => ({ obj, index: i }))
-                .filter(item => item.obj.nombre.toLowerCase().includes(texto))
-                .slice(0, 75);
-
-            filtrados.forEach(item => {
-                const btn = document.createElement("button");
-                btn.textContent = item.obj.nombre;
-                btn_Lista.N_Cancion = item.index
-                
-
-                btn.onclick = () => {
-                    reproducirAudio(item.index)
-                    BuscarPaginaCancion()
-                };
-
-                contenedor.appendChild(btn);
-            });
-        });
-    </script>
-    <!--
-    <script>// Poner siguiente canción automáticamente de la listas creadas
-        document.getElementById("audioLista").addEventListener("endedList", function () {
-            // Si el bucle está activado o nop esta activo la siguiente canción, no avanzar a la siguiente
-            if (btn_Lista.Bucle_Lista === "on" || btn_Lista.Siguiente_Lista === "off") return;
-
-            // Si NO es la última canción, avanzar
-            if (btn_Lista.N_Cancion < Lista.length - 1) {
-                btn_Lista.N_Cancion++;
-
-                // Control de paginación automática si cambia de página
-                if (btn_Lista.N_Cancion + 1 > btn_Lista.Max) {
-                    paginación(1);
+            // Cuando se pausa
+            audio.addEventListener("pause", () => {
+                if (!audio.ended) {
+                    btnPlay.textContent = "▶";
+                    btnPlay.title = "Reanudar";
+                    btn_Lista.Play = "off";
                 }
+            });
 
-                reproducirAudio(btn_Lista.N_Cancion);
-            }
-            else {
-                // Si llegó a la última canción
+            // Cuando termina
+            audio.addEventListener("ended", () => {
+                btnPlay.textContent = "⏹";
+                btnPlay.title = "Reproducir";
                 btn_Lista.Play = "off";
-                document.getElementById("btn_Play").innerText = "▶";
+            });
+        }
+
+        ///////////////////////////////////////////////////////
+
+        // Control de reproducción de la lista
+        function controlPlayLista() {// Reproducir y pausar audio de la lista
+            const audioLista = document.getElementById("audioLista");
+            const btnPlayLista = document.getElementById("btn_PlayLista");
+
+            function audioPlayLista() {
+                if (audioLista.ended) {
+                    audioLista.currentTime = 0;
+                    audioLista.play();
+                } else if (audioLista.paused) {
+                    audioLista.play();
+                } else {
+                    audioLista.pause();
+                }
+            }
+
+            audioLista.addEventListener("play", () => {
+                btnPlayLista.textContent = "❙❙";
+                btnPlayLista.title = "Pausar";
+                btnLista.Play = "on";
+            });
+
+            audioLista.addEventListener("pause", () => {
+                if (!audioLista.ended) {
+                    btnPlayLista.textContent = "▶";
+                    btnPlayLista.title = "Reanudar";
+                    btnLista.Play = "off";
+                }
+            });
+
+            audioLista.addEventListener("ended", () => {
+                btnPlayLista.textContent = "⏹";
+                btnPlayLista.title = "Reproducir";
+                btnLista.Play = "off";
+            });
+        }
+        controlPlay()
+        controlPlayLista()
+    </script>
+    <script>// Ejecutar función al hacer clic con el botón central del ratón
+
+        // Función para reproducir la lista temporal al hacer clic con el botón central del ratón en el botón de lista temporal
+        document.getElementById("btnTemporal").addEventListener("mousedown", function (evento) {
+            if (evento.button === 1) {
+                ReproducirListaTemporal(1)
+            }
+        });
+
+        // Función para reproducir la última canción del historial al hacer clic con el botón central del ratón en el botón de historial
+        document.addEventListener("mousedown", function(e) {
+            if (e.button === 1) {
+
+                // Verificar si el clic ocurrió dentro del botón #btnHistorial
+                if (!e.target.closest("#btnHistorial")) return;
+
+                e.preventDefault();
+
+                if (Historial.length > 0) {
+                    const ultimaCancion = Historial[Historial.length - 1];
+
+                    let index = Lista.findIndex(c => c.nombre === ultimaCancion);
+
+                    if (index !== -1) {
+                        reproducirAudioHistorial(index);
+                    }
+                }
             }
         });
     </script>
-    -->
 </body>
 </html>

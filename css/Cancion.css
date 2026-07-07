@@ -1,19 +1,12 @@
-#containerBotones {
-    margin-top: 40px;
-}
+#containerBotones {margin-top: 40px;}
 #btn_botones {
-    height: 105px;
+    min-height: 210px;
+    max-height: 252px;
     width: 1700px;
     border: 1px solid black;
 }
-#cambioCacnion {
-    margin-top: 10px;
-    text-align: center;
-}
-#paginacion {
-    margin-top: 20px;
-    text-align: center;
-}
+#cambioCacnion {margin-top: 10px;text-align: center;}
+#paginacion {margin-top: 20px;text-align: center;}
 #div_paginaActual {
     width: 50px;
 
@@ -22,4 +15,25 @@
 
     font-weight: bold;
     font-size: 100%;
+}
+
+#divBarra {
+    border: 1px solid black;
+    width: 92.5%;
+
+    margin-top: 3.75%;
+    margin-left: 3.75%;
+    margin-right: 3.75%;
+    cursor: pointer;
+}
+#Barra {
+    background-color: #4caf50;
+    height: 20px;
+    width: 0%;
+    
+}
+#divTiempoActual {
+    margin-top: 10px;
+    text-align: center;
+    margin-bottom: 3.5%;
 }

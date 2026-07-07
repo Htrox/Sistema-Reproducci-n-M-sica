@@ -31,41 +31,21 @@
 }
 
 div.divsCrearLista{
-    height: 99.5%;
+    height: 99.9%;
     width: 45%;
     border: 1px solid black;
 }
 
-#buscadorLista {
-    width: 95%;
-}
+#buscadorLista, #buscadorListaCanciónTemporal, #buscadorListaListaTemporal, #buscadorEditarLista, #buscardorLista, #buscadorListaCreando {width: 99%;}
 
 
-#divBuscador, #CrearLista, #MostrarLista {
-    display: none;
-}
-#divarribaCrearLista {
-    display: flex;
-    justify-content: start;
-}
-#tituloLista {
-    width: 60%;
-}
-#CancionAñadida {
-    height: 85%;
-    margin-top: 20px;
-}
-#errorLista {
+#divBuscador, #CrearLista, #MostrarLista, #divBuscadorTemporal, #CrearListaTemporal, #divEditarBuscador, #EditarLista, #divBuscadorLista {display: none;}
+#errorLista, #errorListaEditar {
     color: red;
     margin-top: 5px;
     font-size: 12px;
 }
 
-
-div.divSpaceBetween {
-    display: flex;
-    justify-content: space-between;
-}
 
 button.CuboBlancoLista {
     border: 1px solid black;
@@ -73,9 +53,7 @@ button.CuboBlancoLista {
 
     width: 84%;
 }
-button.CuboBlancoLista:hover {
-    background-color: RGB(235, 235, 235);
-}
+button.CuboBlancoLista:hover {background-color: RGB(235, 235, 235);}
 
 #div_MostrarTituloLista {
     font-size: 20px;
@@ -84,19 +62,95 @@ button.CuboBlancoLista:hover {
     padding: 7px;
 }
 
-#MostrarMusica {
-    height: 85%;
+#MostrarMusica {height: 90%; width: 99.9%;overflow: auto;}
+
+#btnBorrarListaTemporal {border: 1px solid black;background-color: red;}
+
+#divSearchCancion, #divSearchLista  {display: none;}
+
+#btnCancion, #btnListas {
+    border: 1px solid black;
+    background-color: white;
+
+    width: 50%;
+    padding: 5px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
+div.divBordes {
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
 
+div.divBordesGrandes {
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
+    padding: 2.5px;
+}
+span.nombreLista {font-size: 12px;}
 
+div.div_NombresListas {
+    padding-top: 3.5px;
+    padding-bottom: 3.5px;
+    user-select: text;
+}
 
+#resultadosLista, #resultadosListaCreando {margin-top: 10px;}
 
+#ListaCreadas {
+    border: 1px solid black;
+    height: 99.9%;
+    width: 99%;
+}
 
+button.BotonLista_ReproducirLista, button.BotonLista_BorrarLista, button.BotonLista_VerLista, button.BotonLista_ConfigurarLista {
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid black;
+    background-color: white;
+    cursor: pointer;
+}
 
+button.BotonLista_ReproducirLista:hover {background-color: black;color: white;transition: background-color 0.25s;}
+button.BotonLista_BorrarLista:hover {background-color: red;color: white;transition: background-color 0.25s;}
+button.BotonLista_VerLista:hover {background-color: yellow;transition: background-color 0.25s;}
+button.BotonLista_ConfigurarLista:hover {background-color: blue;color: white;transition: background-color 0.25s;}
 
+button.Boton_ReproducirLista_active {border: 1px solid black;background-color: black;color: white;}
+button.Boton_BorrarLista_active {border: 1px solid black;background-color: red;color: white;}
+button.Boton_VerLista_active {border: 1px solid black;background-color: yellow;}
+button.Boton_ConfigurarLista_active {border: 1px solid black;background-color: blue;color: white;}
 
-#ListaCreadas, #resultados, #CancionAñadida, #MostrarMusica {
-    scrollbar-width: auto;
+button.Boton_ReproducirLista_active:hover {border: 1px solid black;background-color: rgb(20, 20, 20);color: white;}
+button.Boton_BorrarLista_active:hover {border: 1px solid black;background-color: RGB(235, 0, 0);color: white;}
+button.Boton_VerLista_active:hover {border: 1px solid black;background-color: rgb(235, 235, 0);}
+button.Boton_ConfigurarLista_active:hover {border: 1px solid black;background-color: rgb(0, 0, 235);color: white;}
+
+#div_BotonesLista {
+    padding: 7.5px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#resultadosListaTemporal, #resultadosListaCreando, #resultadosEditar {
+    margin-top: 10px;
+    min-height: 555px;
+    height: 300px;
+    max-height: 95%;
+    overflow: auto;
+}
+#resultadosCanciónTemporal {
+    margin-top: 10px;
+    min-height: 525px;
+    height: 300px;
+    max-height: 95%;
+    overflow: auto;
 }

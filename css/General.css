@@ -1,11 +1,6 @@
-body {
-    font-family: Arial;
-    user-select: none;
-}
+body {font-family: Arial;user-select: none;}
 
-h1, h2 {
-    text-align: center;
-}
+h1, h2 {text-align: center;}
 
 button.btnBarraSuperior {
     border: 1px solid black;
@@ -13,9 +8,7 @@ button.btnBarraSuperior {
 
     font-size: 20px;
 }
-button.btnBarraSuperior:hover {
-    background-color: rgb(230, 230, 230);
-}
+button.btnBarraSuperior:hover {background-color: rgb(230, 230, 230);}
 
 #containerAudio {
     display: flex;
@@ -23,19 +16,69 @@ button.btnBarraSuperior:hover {
     align-items: center;
 }
 
-table, tr, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
+table, tr, td {border: 1px solid black;border-collapse: collapse;}
 
-#ListaCreadas, #divBuscador, #CancionAñadida {
+#div_ListasCreada, #resultadosListas, #resultadosEditar, #resultadosListaTemporal {margin-top: 10px;overflow: auto;}
+
+/* Barra de desplazamiento */
+#ListaCreadas, #CancionAñadida, #CancionAñadidaEditar, #listaHistorial, #ListaCreadas, #CancionAñadida, #resultadosTemporal, #resultadosLista {
     overflow: auto;
 }
 
-button.CuboBlanco {
-    border: 1px solid black;
+button.CuboBlanco {border: 1px solid black;background-color: white;}
+button.CuboBlanco:hover {background-color: RGB(235, 235, 235); transition: background-color 0.25s ease;}
+
+div.divSpaceBetween {display: flex;justify-content: space-between;}
+
+button.btn_controls {
+    height: 50px;
+    width: 50px;
+    border-radius: 10px;
+    
     background-color: white;
+    border: 2px solid black;
+    
+    font-size: 100%;
+    font-weight: bold;
+
+    cursor: pointer;
 }
-button.CuboBlanco:hover {
-    background-color: RGB(235, 235, 235);
+button.btn_controls:hover {background-color: rgb(235, 235, 235); transition: background-color 0.25s ease;}
+button.btn_controls_Red {background-color: red;color: black;}
+button.btn_controls_Red:hover {background-color: rgb(235, 0, 0); transition: background-color 0.25s ease;}
+button.btn_controls_Green {background-color: green;color: white;}
+button.btn_controls_Green:hover {background-color: rgb(0, 108, 0); transition: background-color 0.25s ease;}
+
+
+
+div.ventana {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
+div.contenidoVentana {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    height: 80%;
+    width: 80%;
+    margin: 5% auto;
+    text-align: center;
+}
+
+button.CuboBlanco_Lista {
+    background-color: white;
+    border: 1px solid black;
+    padding: 4px;
+    margin: 5px;
+}
+button.CuboBlanco_Lista:hover {background-color: rgb(235, 235, 235);transition: background-color 0.25s ease;}
+button.CuboRojo_Lista {
+    background-color: rgb(255, 150, 150);
+    border: 1px solid black;
+    padding: 4px;
+    margin: 5px;
+}
+button.CuboRojo_Lista:hover {background-color: rgb(255, 100, 100);transition: background-color 0.25s ease;}
